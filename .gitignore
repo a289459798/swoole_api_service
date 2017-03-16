@@ -1,0 +1,5 @@
+.idea
+vendor
+*.lock
+Dockerfile
+docker-compose.yaml
