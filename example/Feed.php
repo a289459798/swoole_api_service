@@ -17,8 +17,6 @@ class Feed extends BijouApi
     public function getInfo($id)
     {
 
-        $this->getResponse()->header("Content-Type", "application/json");
-
         return json_encode(
             ['id' => $id]
         );

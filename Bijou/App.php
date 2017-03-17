@@ -16,7 +16,8 @@ use Bijou\Decorator\TimeDecorator;
 use Bijou\Exception\MethodNotAllowException;
 use Bijou\Exception\NoFoundException;
 use Bijou\Exception\PHPException;
-use Swoole\Http\Server;
+use Swoole\Http;
+use Swoole\WebSocket;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -34,17 +35,19 @@ class App
      * App constructor.
      * @param array $ips
      */
-    public function __construct(Array $ips)
+    public function __construct($ips, $openWebSocket = false)
     {
 
         $this->requests = [];
         $this->route = new Route();
-        foreach ($ips as $k => $ip) {
-            if ($k == 0) {
-                $this->server = new Server($ip[0], $ip[1]);
-            } else {
-                $this->server->addlistener($ip[0], $ip[1], $ip[2]);
-            }
+        $mode = $ips[2] ?? SWOOLE_PROCESS;
+        $flag = $ips[3] ?? SWOOLE_SOCK_TCP;
+
+        if ($openWebSocket) {
+
+            $this->server = new WebSocket\Server($ips[0], $ips[1], $mode, $flag);
+        } else {
+            $this->server = new Http\Server($ips[0], $ips[1], $mode, $flag);
         }
         $this->server->on("request", [$this, 'onRequest']);
     }
@@ -59,6 +62,30 @@ class App
         if (isset($config['server'])) {
 
             $this->server->set($config['server']);
+        }
+    }
+
+    /**
+     * @param array $ips
+     * @param array $config
+     */
+    public function addListener(Array $ips, Array $config = null)
+    {
+        $port = $this->server->addlistener($ips[0], $ips[1], $ips[2]);
+
+        isset($config) && $port->set($config);
+    }
+
+    /**
+     * @param array $callback
+     */
+    public function setWebSocket(Array $callback)
+    {
+        if ($this->server instanceof WebSocket\Server) {
+
+            isset($callback['open']) && $this->server->on('open', $callback['open']);
+            isset($callback['message']) && $this->server->on('message', $callback['message']);
+            isset($callback['close']) && $this->server->on('close', $callback['close']);
         }
     }
 
@@ -153,7 +180,7 @@ class App
         } else {
 
             $this->requestError($e, $request);
-            $e =  new PHPException($request, $response);
+            $e = new PHPException($request, $response);
         }
 
         $e->throwException($e);

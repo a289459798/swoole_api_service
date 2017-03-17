@@ -10,12 +10,8 @@
 $autoloader = require __DIR__ . '/../vendor/autoload.php';
 
 $autoloader->addPsr4('Bijou\Example\\', __DIR__);
-$app = new Bijou\App(
-    [
-        ['0.0.0.0', 9501],
-        ['0.0.0.0', 9502, SWOOLE_SOCK_TCP],
-    ]
-);
+
+$app = new Bijou\App(['0.0.0.0', 9501], true);
 
 $app->loadConfig(
     [
@@ -28,6 +24,9 @@ $app->loadConfig(
     ]
 );
 
+$app->addListener(['0.0.0.0', 9502, SWOOLE_TCP]);
+
+
 $app->loadRoute(
     [
         '/user' => [
@@ -38,6 +37,14 @@ $app->loadRoute(
 
         ['GET', '/feed/{id:[0-9]+}',  ['\Bijou\Example\Feed', 'getInfo']],
         ['POST', '/f', 'fffff'],
+    ]
+);
+
+$app->setWebSocket(
+    [
+        'open' => ['\Bijou\Example\Chat', 'onOpen'],
+        'close' => ['\Bijou\Example\Chat', 'onClose'],
+        'message' => ['\Bijou\Example\Chat', 'onMessage'],
     ]
 );
 

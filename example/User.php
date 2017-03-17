@@ -11,11 +11,9 @@ namespace Bijou\Example;
 
 class User
 {
-
     public function getInfo($id)
     {
 
-        throw new \Exception();
         return json_encode([
             'id' => $id,
             'name' => "zhangzy"

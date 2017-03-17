@@ -80,6 +80,7 @@ class Route
                 $vars = $routeInfo[2];
                 // ... call $handler with $vars
                 $handlerObject = new $handler[0]($request, $response);
+                $response->header("Content-Type", "application/json");
                 $response->end(call_user_func_array([$handlerObject, $handler[1]], $vars));
                 break;
         }
