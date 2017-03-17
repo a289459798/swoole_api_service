@@ -8,6 +8,7 @@
 
 namespace Bijou;
 
+use Bijou\Decorator\Decorator;
 use Bijou\Exception\MethodNotAllowException;
 use Bijou\Exception\NoFoundException;
 use FastRoute;
@@ -51,9 +52,14 @@ class Route
     /**
      * @param Request $request
      * @param Response $response
+     * @param App $app
+     * @throws MethodNotAllowException
+     * @throws NoFoundException
      */
-    public function dispatch(Request $request, Response $response)
+    public function dispatch(Request $request, Response $response, App $app)
     {
+
+        $app->requestStart($request);
 
         $method = $request->server['request_method'];
         $pathInfo = $request->server['path_info'];
@@ -77,6 +83,8 @@ class Route
                 $response->end(call_user_func_array([$handlerObject, $handler[1]], $vars));
                 break;
         }
+
+        $app->requestEnd($request);
     }
 
 }

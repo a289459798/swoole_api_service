@@ -36,6 +36,6 @@ abstract class BijouException extends \Exception
         return $this->response;
     }
 
-    abstract function throwException();
+    abstract function throwException(\Throwable $throwable);
 
 }

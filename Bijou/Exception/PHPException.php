@@ -9,15 +9,15 @@
 namespace Bijou\Exception;
 
 
-class MethodNotAllowException extends BijouException
+class PHPException extends BijouException
 {
 
     public function throwException(\Throwable $throwable)
     {
-        $this->getResponse()->status(405);
+        $this->getResponse()->status(500);
         $this->getResponse()->end(json_encode([
-            'code' => 405,
-            'message' => 'Method Not Allowed'
+            'code' => 500,
+            'message' => 'Server error'
         ]));
     }
 

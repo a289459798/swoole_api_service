@@ -15,9 +15,10 @@ class User
     public function getInfo($id)
     {
 
+        throw new \Exception();
         return json_encode([
-            id => $id,
-            name => "zhangzy"
+            'id' => $id,
+            'name' => "zhangzy"
         ]);
     }
 }

@@ -40,4 +40,8 @@ $app->loadRoute(
         ['POST', '/f', 'fffff'],
     ]
 );
+
+$app->addDecorator(new \Bijou\Example\Decorator\TimeDecorator());
+$app->addDecorator(new \Bijou\Example\Decorator\ExceptionDecorator());
+
 $app->run();
