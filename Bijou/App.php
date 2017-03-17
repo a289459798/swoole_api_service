@@ -9,6 +9,8 @@
 
 namespace Bijou;
 
+use Bijou\Exception\MethodNotAllowException;
+use Bijou\Exception\NoFoundException;
 use Swoole\Http\Server;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -66,8 +68,28 @@ class App
     public function onRequest(Request $request, Response $response)
     {
 
-        $this->route->dispatch($request, $response);
+        try {
+            $this->route->dispatch($request, $response);
+        } catch (\Exception $e) {
+
+            $this->handlerException($e);
+        } catch (\Throwable $e) {
+            var_dump($e);
+        }
     }
+
+    private function handlerException($e)
+    {
+
+        if ($e instanceof NoFoundException) {
+
+            $e->throwException();
+        } else if($e instanceof MethodNotAllowException) {
+            $e->throwException();
+        }
+        throw $e;
+    }
+
 
     public function run()
     {

@@ -12,10 +12,10 @@ namespace Bijou\Example;
 class User
 {
 
-    public function getInfo($params)
+    public function getInfo($id)
     {
         return json_encode([
-            id => $params['id'],
+            id => $id,
             name => "zhangzy"
         ]);
     }

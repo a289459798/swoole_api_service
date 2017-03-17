@@ -8,6 +8,8 @@
 
 namespace Bijou;
 
+use Bijou\Exception\MethodNotAllowException;
+use Bijou\Exception\NoFoundException;
 use FastRoute;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
@@ -61,17 +63,17 @@ class Route
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
                 // ... 404 Not Found
-                $response->end("404 Not Found");
+                throw new NoFoundException($request, $response);
                 break;
             case Dispatcher::METHOD_NOT_ALLOWED:
                 // ... 405 Method Not Allowed
-                $response->end("405 Method Not Allowed");
+                throw new MethodNotAllowException($request, $response);
                 break;
             case Dispatcher::FOUND:
                 $handler = $routeInfo[1];
                 $vars = $routeInfo[2];
                 // ... call $handler with $vars
-                $response->end(call_user_func($handler, $vars));
+                $response->end(call_user_func_array($handler, $vars));
                 break;
         }
     }
