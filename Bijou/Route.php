@@ -73,7 +73,8 @@ class Route
                 $handler = $routeInfo[1];
                 $vars = $routeInfo[2];
                 // ... call $handler with $vars
-                $response->end(call_user_func_array($handler, $vars));
+                $handlerObject = new $handler[0]($request, $response);
+                $response->end(call_user_func_array([$handlerObject, $handler[1]], $vars));
                 break;
         }
     }
