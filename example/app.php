@@ -13,8 +13,6 @@ $autoloader->addPsr4('Bijou\Example\\', __DIR__);
 
 $app = new Bijou\App(['0.0.0.0', 9501], true);
 
-$app->addListener(['0.0.0.0', 9502, SWOOLE_TCP]);
-
 $app->loadConfig(
     [
         'server' => [
@@ -25,6 +23,9 @@ $app->loadConfig(
         ]
     ]
 );
+
+$app->addListener(['0.0.0.0', 9502, SWOOLE_TCP]);
+
 
 $app->loadRoute(
     [
