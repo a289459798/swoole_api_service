@@ -12,4 +12,8 @@ namespace Bijou\Example\Decorator;
 class ExceptionDecorator extends \Bijou\Decorator\ExceptionDecorator
 {
 
+    function throwException(\Throwable $throwable)
+    {
+        echo 'file:' . $throwable->getMessage() . '--line:' . $throwable->getLine();
+    }
 }

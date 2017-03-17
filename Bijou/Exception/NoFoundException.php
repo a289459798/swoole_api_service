@@ -12,7 +12,7 @@ namespace Bijou\Exception;
 class NoFoundException extends BijouException
 {
 
-    public function throwException()
+    public function throwException(\Throwable $throwable)
     {
         $this->getResponse()->status(404);
         $this->getResponse()->end(json_encode([

@@ -11,5 +11,5 @@ namespace Bijou\Decorator;
 
 abstract class ExceptionDecorator extends Decorator
 {
-
+    abstract function throwException(\Throwable $throwable);
 }

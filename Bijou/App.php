@@ -15,6 +15,7 @@ use Bijou\Decorator\RunTimeDecorator;
 use Bijou\Decorator\TimeDecorator;
 use Bijou\Exception\MethodNotAllowException;
 use Bijou\Exception\NoFoundException;
+use Bijou\Exception\PHPException;
 use Swoole\Http\Server;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -23,7 +24,8 @@ class App
 {
     private $server;
     private $route;
-    private $decorators;
+    private $runTimeDecorator;
+    private $exceptionDecorator;
     private $requests;
 
     /**
@@ -35,7 +37,6 @@ class App
     public function __construct(Array $ips)
     {
 
-        $this->decorators = [];
         $this->requests = [];
         $this->route = new Route();
         foreach ($ips as $k => $ip) {
@@ -81,9 +82,9 @@ class App
     {
 
         if ($decorator instanceof RunTimeDecorator) {
-            $this->decorators['runTimeDecorator'] = $decorator;
+            $this->runTimeDecorator = $decorator;
         } else if ($decorator instanceof ExceptionDecorator) {
-            $this->decorators['exceptionDecorator'] = $decorator;
+            $this->exceptionDecorator = $decorator;
         }
     }
 
@@ -93,10 +94,9 @@ class App
         try {
             $this->route->dispatch($request, $response, $this);
         } catch (\Exception $e) {
-
-            $this->handlerException($e);
+            $this->handlerException($e, $request, $response);
         } catch (\Throwable $e) {
-            var_dump($e);
+            $this->handlerException($e, $request, $response);
         }
     }
 
@@ -105,10 +105,9 @@ class App
      */
     public function requestStart(Request $request)
     {
-        if (isset($this->decorators['runTimeDecorator'])) {
+        if (isset($this->runTimeDecorator)) {
 
-            $runTimeDecorator = $this->decorators['runTimeDecorator'];
-            $this->requests[$request->fd] = $runTimeDecorator->getCurrentTime();
+            $this->requests[$request->fd] = $this->runTimeDecorator->getCurrentTime();
         }
     }
 
@@ -117,27 +116,47 @@ class App
      */
     public function requestEnd(Request $request)
     {
-        if (isset($this->decorators['runTimeDecorator'])) {
-            $runTimeDecorator = $this->decorators['runTimeDecorator'];
-            if(isset($this->requests[$request->fd])) {
-                $runTimeDecorator->setApi($request->server['path_info']);
-                $endTime = $runTimeDecorator->getCurrentTime();
-                $runTimeDecorator->setRunTime($endTime - $this->requests[$request->fd]);
+        if (isset($this->runTimeDecorator)) {
+            if (isset($this->requests[$request->fd])) {
+                $this->runTimeDecorator->setApi($request->server['path_info']);
+                $endTime = $this->runTimeDecorator->getCurrentTime();
+                $this->runTimeDecorator->setRunTime($endTime - $this->requests[$request->fd]);
                 unset($this->requests[$request->fd]);
             }
         }
     }
 
-    private function handlerException($e)
+    /**
+     * @param \Throwable $throwable
+     * @param Request $request
+     */
+    public function requestError(\Throwable $throwable, Request $request)
+    {
+        if (isset($this->exceptionDecorator)) {
+            $this->exceptionDecorator->setApi($request->server['path_info']);
+            $this->exceptionDecorator->throwException($throwable);
+        }
+
+        $this->requestEnd($request);
+    }
+
+
+    private function handlerException($e, $request, $response)
     {
 
         if ($e instanceof NoFoundException) {
 
-            $e->throwException();
         } else if ($e instanceof MethodNotAllowException) {
-            $e->throwException();
+
+        } else if ($e instanceof PHPException) {
+
+        } else {
+
+            $this->requestError($e, $request);
+            $e =  new PHPException($request, $response);
         }
-        throw $e;
+
+        $e->throwException($e);
     }
 
 
