@@ -3,3 +3,4 @@ vendor
 *.lock
 Dockerfile
 docker-compose.yaml
+/nbproject/private/
