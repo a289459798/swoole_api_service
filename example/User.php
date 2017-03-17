@@ -14,6 +14,7 @@ class User
 
     public function getInfo($id)
     {
+
         return json_encode([
             id => $id,
             name => "zhangzy"

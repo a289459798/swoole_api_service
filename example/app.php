@@ -36,7 +36,7 @@ $app->loadRoute(
             ['POST', '/c', 'bbbbb'],
         ],
 
-        ['GET', '/e', 'fffff'],
+        ['GET', '/feed/{id:[0-9]+}',  ['\Bijou\Example\Feed', 'getInfo']],
         ['POST', '/f', 'fffff'],
     ]
 );
