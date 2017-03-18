@@ -86,12 +86,12 @@ class App
         if ($this->server instanceof WebSocket\Server) {
 
             if (is_callable([$className, "onOpen"])) {
-                $this->server->on('open', function (WebSocket\Server $server, Http\Request $request) use($className) {
+                $this->server->on('open', function (WebSocket\Server $server, Http\Request $request) use ($className) {
                     call_user_func_array([$className, "onOpen"], [new \Bijou\Http\WebSocket($server), new \Bijou\Http\Request($request)]);
                 });
             }
 
-            $this->server->on('message', function (WebSocket\Server $server, WebSocket\Frame $frame) use($className) {
+            $this->server->on('message', function (WebSocket\Server $server, WebSocket\Frame $frame) use ($className) {
                 call_user_func_array([$className, "onMessage"], [new \Bijou\Http\WebSocket($server), new Frame($frame)]);
             });
 
@@ -167,34 +167,45 @@ class App
     /**
      * @param \Throwable $throwable
      * @param Request $request
+     * @param Response $response
+     * @return bool
      */
-    public function requestError(\Throwable $throwable, Request $request)
+    public function requestError(\Throwable $throwable, Request $request, Response $response)
     {
+        $this->requestEnd($request);
         if (isset($this->exceptionDecorator)) {
             $this->exceptionDecorator->setRequest(new \Bijou\Http\Request($request));
-            $this->exceptionDecorator->throwException($throwable);
+            $response->end(json_encode($this->exceptionDecorator->throwException($throwable)));
+            return true;
         }
 
-        $this->requestEnd($request);
+        return false;
     }
 
-
+    /**
+     * 处理错误
+     * @param $e
+     * @param $request
+     * @param $response
+     */
     private function handlerException($e, $request, $response)
     {
 
-        if ($e instanceof NoFoundException) {
+        if (!$this->requestError($e, $request, $response)) {
 
-        } else if ($e instanceof MethodNotAllowException) {
+            if ($e instanceof NoFoundException) {
 
-        } else if ($e instanceof PHPException) {
+            } else if ($e instanceof MethodNotAllowException) {
 
-        } else {
+            } else if ($e instanceof PHPException) {
 
-            $this->requestError($e, $request);
-            $e = new PHPException($request, $response);
+            } else {
+
+                $e = new PHPException($request, $response);
+            }
+
+            $e->throwException($e);
         }
-
-        $e->throwException($e);
     }
 
 

@@ -18,12 +18,14 @@ abstract class BijouException extends \Exception
 
     /**
      * BijouException constructor.
+     * @param string $message
+     * @param int $code
      * @param Request $request
      * @param Response $response
      */
-    public function __construct($request, $response)
+    public function __construct($message, $code, $request, $response)
     {
-        parent::__construct();
+        parent::__construct($message, $code);
         $this->request = $request;
         $this->response = $response;
     }
@@ -36,6 +38,16 @@ abstract class BijouException extends \Exception
         return $this->response;
     }
 
-    abstract function throwException(\Throwable $throwable);
+    /**
+     * @param \Throwable $throwable
+     */
+    public function throwException(\Throwable $throwable)
+    {
+        $this->getResponse()->status($this->code);
+        $this->getResponse()->end(json_encode([
+            'code' => $this->code,
+            'message' => $this->message
+        ]));
+    }
 
 }

@@ -8,17 +8,15 @@
 
 namespace Bijou\Exception;
 
+use Swoole\Http\Request;
+use Swoole\Http\Response;
 
 class MethodNotAllowException extends BijouException
 {
 
-    public function throwException(\Throwable $throwable)
+    public function __construct(Request $request, Response $response)
     {
-        $this->getResponse()->status(405);
-        $this->getResponse()->end(json_encode([
-            'code' => 405,
-            'message' => 'Method Not Allowed'
-        ]));
+        parent::__construct('Method Not Allowed', 405, $request, $response);
     }
 
 }

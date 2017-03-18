@@ -8,17 +8,16 @@
 
 namespace Bijou\Exception;
 
+use Swoole\Http\Request;
+use Swoole\Http\Response;
 
 class NoFoundException extends BijouException
 {
 
-    public function throwException(\Throwable $throwable)
+    public function __construct(Request $request, Response $response)
     {
-        $this->getResponse()->status(404);
-        $this->getResponse()->end(json_encode([
-            'code' => 404,
-            'message' => 'Not Found'
-        ]));
+        parent::__construct('Not Found', 404, $request, $response);
     }
+
 
 }
