@@ -25,7 +25,7 @@ class WebSocket
      * 向某个WebSocket客户端连接推送数据
      * @param      $fd
      * @param      $data
-     * @param bool $binary_data
+     * @param int $binary_data
      * @param bool $finish
      * @return bool
      */
