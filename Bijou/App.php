@@ -24,6 +24,7 @@ use Swoole\Http\Response;
 
 class App
 {
+
     private $server;
     private $route;
     private $runTimeDecorator;
@@ -152,9 +153,10 @@ class App
      */
     public function requestEnd(Request $request)
     {
+
         if (isset($this->runTimeDecorator)) {
             if (isset($this->requests[$request->fd])) {
-                $this->runTimeDecorator->setApi($request->server['path_info']);
+                $this->runTimeDecorator->setRequest(new \Bijou\Http\Request($request));
                 $endTime = $this->runTimeDecorator->getCurrentTime();
                 $this->runTimeDecorator->setRunTime($endTime - $this->requests[$request->fd]);
                 unset($this->requests[$request->fd]);
@@ -169,7 +171,7 @@ class App
     public function requestError(\Throwable $throwable, Request $request)
     {
         if (isset($this->exceptionDecorator)) {
-            $this->exceptionDecorator->setApi($request->server['path_info']);
+            $this->exceptionDecorator->setRequest(new \Bijou\Http\Request($request));
             $this->exceptionDecorator->throwException($throwable);
         }
 

@@ -9,17 +9,22 @@
 namespace Bijou\Decorator;
 
 
+use Bijou\Http\Request;
+
 abstract class Decorator
 {
-    private $api;
+    private $request;
 
-    public function setApi($api)
+    public function setRequest(Request $request)
     {
-        $this->api = $api;
+        $this->request = $request;
     }
 
-    public function getApi()
+    /**
+     * @return Request
+     */
+    public function getRequest()
     {
-        return $this->api;
+        return $this->request;
     }
 }
