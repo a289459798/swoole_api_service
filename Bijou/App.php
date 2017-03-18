@@ -16,6 +16,7 @@ use Bijou\Decorator\TimeDecorator;
 use Bijou\Exception\MethodNotAllowException;
 use Bijou\Exception\NoFoundException;
 use Bijou\Exception\PHPException;
+use Bijou\Http\Frame;
 use Swoole\Http;
 use Swoole\WebSocket;
 use Swoole\Http\Request;
@@ -77,15 +78,23 @@ class App
     }
 
     /**
-     * @param array $callback
+     * @param $className
      */
-    public function setWebSocket(Array $callback)
+    public function setWebSocket($className)
     {
         if ($this->server instanceof WebSocket\Server) {
 
-            isset($callback['open']) && $this->server->on('open', $callback['open']);
-            isset($callback['message']) && $this->server->on('message', $callback['message']);
-            isset($callback['close']) && $this->server->on('close', $callback['close']);
+            if (is_callable([$className, "onOpen"])) {
+                $this->server->on('open', function (WebSocket\Server $server, Http\Request $request) use($className) {
+                    call_user_func_array([$className, "onOpen"], [new \Bijou\Http\WebSocket($server), new \Bijou\Http\Request($request)]);
+                });
+            }
+
+            $this->server->on('message', function (WebSocket\Server $server, WebSocket\Frame $frame) use($className) {
+                call_user_func_array([$className, "onMessage"], [new \Bijou\Http\WebSocket($server), new Frame($frame)]);
+            });
+
+            is_callable([$className, "onClose"]) && $this->server->on('close', [$className, "onClose"]);
         }
     }
 

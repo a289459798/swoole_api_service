@@ -9,20 +9,22 @@
 namespace Bijou\Example;
 
 
-use Swoole\WebSocket\Server;
-use Swoole\WebSocket\Frame;
+use Bijou\Http\Frame;
+use Bijou\Http\Request;
+use Bijou\Http\WebSocket;
 
 class Chat
 {
-    public function onOpen()
+    public function onOpen(WebSocket $server, Request $request)
     {
-        echo 'onOpen';
+        echo 'onOpen: 连接标识：' . $request->getClient();
+        $server->send($request->getClient(), json_encode([1, 2, 3, 4]));
     }
 
-    public function onMessage(Server $server, Frame $frame)
+    public function onMessage(WebSocket $server, Frame $frame)
     {
-        echo 'onMessage';
-        $server->push($frame->fd, json_encode([1, 2, 3, 4]));
+        echo 'onMessage:' . $frame->getData();
+        $server->send($frame->getClient(), json_encode([1, 2, 3, 4]));
     }
 
     public function onClose()

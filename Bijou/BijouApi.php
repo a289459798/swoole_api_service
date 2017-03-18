@@ -24,19 +24,19 @@ abstract class BijouApi
      */
     public function __construct($request, $response)
     {
-        $this->request = $request;
-        $this->response = $response;
+        $this->request = new \Bijou\Http\Request($request);
+        $this->response = new \Bijou\Http\Response($response);
     }
 
     /**
-     * @return Request
+     * @return \Bijou\Http\Request
      */
     public function getRequest() {
         return $this->request;
     }
 
     /**
-     * @return Response
+     * @return \Bijou\Http\Response
      */
     public function getResponse() {
         return $this->response;

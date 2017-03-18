@@ -15,8 +15,7 @@ class User
     {
 
         return json_encode([
-            'id' => $id,
-            'name' => "zhangzy"
+            'id' => $id
         ]);
     }
 }
