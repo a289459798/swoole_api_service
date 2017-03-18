@@ -8,17 +8,14 @@
 
 namespace Bijou\Exception;
 
+use Swoole\Http\Request;
+use Swoole\Http\Response;
 
 class PHPException extends BijouException
 {
 
-    public function throwException(\Throwable $throwable)
+    public function __construct(Request $request, Response $response)
     {
-        $this->getResponse()->status(500);
-        $this->getResponse()->end(json_encode([
-            'code' => 500,
-            'message' => 'Server error'
-        ]));
+        parent::__construct('Server error', 500, $request, $response);
     }
-
 }
