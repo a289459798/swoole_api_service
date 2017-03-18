@@ -47,6 +47,11 @@ class Request
         return $this->header;
     }
 
+    public function getApi()
+    {
+        return $this->request->server['path_info'];
+    }
+
     /**
      * 获取用户ip
      * @return mixed
