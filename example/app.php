@@ -40,13 +40,7 @@ $app->loadRoute(
     ]
 );
 
-$app->setWebSocket(
-    [
-        'open' => ['\Bijou\Example\Chat', 'onOpen'],
-        'close' => ['\Bijou\Example\Chat', 'onClose'],
-        'message' => ['\Bijou\Example\Chat', 'onMessage'],
-    ]
-);
+$app->setWebSocket('\Bijou\Example\Chat');
 
 $app->addDecorator(new \Bijou\Example\Decorator\TimeDecorator());
 $app->addDecorator(new \Bijou\Example\Decorator\ExceptionDecorator());

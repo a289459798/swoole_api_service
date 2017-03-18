@@ -8,9 +8,9 @@
 
 namespace Bijou;
 
-use Bijou\Decorator\Decorator;
 use Bijou\Exception\MethodNotAllowException;
 use Bijou\Exception\NoFoundException;
+use Bijou\Exception\PHPException;
 use FastRoute;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
@@ -55,6 +55,7 @@ class Route
      * @param App $app
      * @throws MethodNotAllowException
      * @throws NoFoundException
+     * @throws PHPException
      */
     public function dispatch(Request $request, Response $response, App $app)
     {
@@ -79,6 +80,9 @@ class Route
                 $handler = $routeInfo[1];
                 $vars = $routeInfo[2];
                 // ... call $handler with $vars
+                if(!is_callable($handler)) {
+                    throw new PHPException($request, $response);
+                }
                 $handlerObject = new $handler[0]($request, $response);
                 $response->header("Content-Type", "application/json");
                 $response->end(call_user_func_array([$handlerObject, $handler[1]], $vars));
