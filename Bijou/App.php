@@ -9,6 +9,7 @@
 
 namespace Bijou;
 
+use Bijou\Core\TaskManager;
 use Bijou\Decorator\Decorator;
 use Bijou\Decorator\ExceptionDecorator;
 use Bijou\Decorator\RunTimeDecorator;
@@ -17,6 +18,7 @@ use Bijou\Exception\MethodNotAllowException;
 use Bijou\Exception\NoFoundException;
 use Bijou\Exception\PHPException;
 use Bijou\Http\Frame;
+use Bijou\Interfaces\AsyncTaskInterface;
 use Swoole\Http;
 use Swoole\WebSocket;
 use Swoole\Http\Request;
@@ -31,6 +33,7 @@ class App
     private $exceptionDecorator;
     private $requests;
     private $securityRoute;
+    private $taskManager;
 
     /**
      * 设置监听的ip与端口
@@ -53,6 +56,9 @@ class App
             $this->server = new Http\Server($ips[0], $ips[1], $mode, $flag);
         }
         $this->server->on("request", [$this, 'onRequest']);
+        $this->server->on("request", [$this, 'onRequest']);
+
+        $this->server->aaa = 1;
     }
 
     /**
@@ -65,6 +71,12 @@ class App
         if (isset($config['server'])) {
 
             $this->server->set($config['server']);
+
+            if ($config['server']['task_worker_num'] > 0) {
+                $this->taskManager = new TaskManager();
+                $this->server->on("Task", [$this->taskManager, 'onTask']);
+                $this->server->on("Finish", [$this->taskManager, 'onFinish']);
+            }
         }
     }
 
@@ -132,7 +144,7 @@ class App
         if ($this->securityRoute && isset($this->securityRoute[$route])) {
 
             $handler = $this->securityRoute[$route];
-            $handlerObject = new $handler[0]($request, $response);
+            $handlerObject = new $handler[0]($this, $request, $response);
             return call_user_func([$handlerObject, $handler[1]]);
         }
         return true;
@@ -161,6 +173,17 @@ class App
             $this->handlerException($e, $request, $response);
         } catch (\Throwable $e) {
             $this->handlerException($e, $request, $response);
+        }
+    }
+
+    /**
+     * 添加一个异步任务并执行
+     * @param AsyncTaskInterface $asyncTask
+     */
+    public function addAsyncTask(AsyncTaskInterface $asyncTask)
+    {
+        if ($this->taskManager) {
+            $this->taskManager->addTask($this->server, $asyncTask);
         }
     }
 
