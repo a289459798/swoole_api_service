@@ -33,12 +33,13 @@ $app->loadRoute(
         '/user' => [
             ['GET', '/{id:[0-9]+}', ['\Bijou\Example\User', 'getInfo']],
             ['GET', '/b', 'bbbbb'],
-            ['POST', '/', ['\Bijou\Example\User', 'updateUser']],
+            ['POST', '/', ['\Bijou\Example\User', 'create']],
         ],
 
         ['GET', '/feed/{id:[0-9]+}',  ['\Bijou\Example\Feed', 'getInfo']],
         ['POST', '/feed', ['\Bijou\Example\Feed', 'create']],
         ['GET', '/feed/email', ['\Bijou\Example\Feed', 'postEmail']],
+        ['GET', '/feed/service', ['\Bijou\Example\Feed', 'service']],
     ]
 );
 
@@ -50,5 +51,8 @@ $app->setWebSocket('\Bijou\Example\Chat');
 
 $app->addDecorator(new \Bijou\Example\Decorator\TimeDecorator());
 $app->addDecorator(new \Bijou\Example\Decorator\ExceptionDecorator());
+
+
+$app->addService(new \Bijou\Example\Service\TestService());
 
 $app->run();

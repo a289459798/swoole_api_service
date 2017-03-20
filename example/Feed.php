@@ -31,6 +31,13 @@ class Feed extends BijouApi
         return '123';
     }
 
+    public function service()
+    {
+        $this->startService('Bijou\Example\Service\TestService', 'action1', ['data' => 'data1']);
+        $this->startService('Bijou\Example\Service\TestService', 'action2', ['data' => 'data2']);
+        return '123';
+    }
+
     public function create()
     {
         return json_encode([
@@ -41,7 +48,7 @@ class Feed extends BijouApi
 
     public function check()
     {
-        return false;
+        return true;
     }
 
 }

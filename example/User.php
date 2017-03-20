@@ -17,4 +17,12 @@ class User
             'id' => $id
         ]);
     }
+
+    public function create($body, $formData)
+    {
+        return json_encode([
+            'body' => $body,
+            'form' => $formData
+        ]);
+    }
 }
