@@ -48,8 +48,23 @@ abstract class BijouApi
         return $this->response;
     }
 
+    /**
+     * 执行一个异步任务
+     * @param AsyncTaskInterface $asyncTask
+     */
     public function addAsyncTask(AsyncTaskInterface $asyncTask)
     {
         $this->app->addAsyncTask($asyncTask);
+    }
+
+    /**
+     * 给常驻进程发送执行命令
+     * @param $classPath 注册service的class 路径
+     * @param $action
+     * @param array $data 传递的数据
+     */
+    public function startService($classPath, $action, Array $data)
+    {
+        $this->app->startService($classPath, $action, $data);
     }
 }

@@ -9,6 +9,8 @@
 
 namespace Bijou;
 
+use Bijou\Core\Service;
+use Bijou\Core\ServiceManager;
 use Bijou\Core\TaskManager;
 use Bijou\Decorator\Decorator;
 use Bijou\Decorator\ExceptionDecorator;
@@ -19,7 +21,9 @@ use Bijou\Exception\NoFoundException;
 use Bijou\Exception\PHPException;
 use Bijou\Http\Frame;
 use Bijou\Interfaces\AsyncTaskInterface;
+use Bijou\Interfaces\ServiceInterface;
 use Swoole\Http;
+use Swoole\Process;
 use Swoole\WebSocket;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
@@ -34,6 +38,8 @@ class App
     private $requests;
     private $securityRoute;
     private $taskManager;
+    private $serviceManager;
+    private $process;
 
     /**
      * 设置监听的ip与端口
@@ -45,6 +51,7 @@ class App
     {
 
         $this->requests = [];
+        $this->process = [];
         $this->route = new Route();
         $mode = $ips[2] ?? SWOOLE_PROCESS;
         $flag = $ips[3] ?? SWOOLE_SOCK_TCP;
@@ -58,7 +65,6 @@ class App
         $this->server->on("request", [$this, 'onRequest']);
         $this->server->on("request", [$this, 'onRequest']);
 
-        $this->server->aaa = 1;
     }
 
     /**
@@ -185,6 +191,32 @@ class App
         if ($this->taskManager) {
             $this->taskManager->addTask($this->server, $asyncTask);
         }
+    }
+
+    /**
+     * @param $classPath
+     * @param $action
+     * @param array $data
+     */
+    public function startService($classPath, $action, Array $data)
+    {
+        if (isset($this->process[$classPath])) {
+            $this->process[$classPath]->write(json_encode(['service' => $classPath, 'action' => $action, 'data' => $data]));
+        }
+    }
+
+    /**
+     * 注册一个永远在后台执行的service
+     * @param ServiceInterface $service
+     */
+    public function addService(ServiceInterface $service)
+    {
+        if (!$this->serviceManager) {
+            $this->serviceManager = new ServiceManager();
+        }
+        $this->serviceManager->addService($service);
+        $this->process[get_class($service)] = new Process([$this->serviceManager, 'onCommand']);
+        $this->server->addProcess($this->process[get_class($service)]);
     }
 
     /**
