@@ -1,6 +1,6 @@
 # Bijou
 
-基于swoole的高性能API框架
+基于swoole的高性能API框架，你完全不用学习swoole，就可以得到swoole的性能，支持异步任务（AsyncTask） 和 基于EventLop 的后台常驻服务（Service）等高级功能
 
 ### 使用
 
