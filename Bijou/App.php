@@ -30,6 +30,7 @@ class App
     private $runTimeDecorator;
     private $exceptionDecorator;
     private $requests;
+    private $securityRoute;
 
     /**
      * 设置监听的ip与端口
@@ -108,7 +109,33 @@ class App
     {
 
         $this->route->loadRoute($route);
+    }
 
+    /**
+     * 设置需要验证的路由
+     * @param array $security
+     */
+    public function setSecurityRoute(Array $security)
+    {
+        $this->securityRoute = $security;
+    }
+
+    /**
+     * 验证是否是安全
+     * @param $route
+     * @param Request $request
+     * @param Response $response
+     * @return bool
+     */
+    public function isSecurityRoute($route, Request $request, Response $response)
+    {
+        if ($this->securityRoute && isset($this->securityRoute[$route])) {
+
+            $handler = $this->securityRoute[$route];
+            $handlerObject = new $handler[0]($request, $response);
+            return call_user_func([$handlerObject, $handler[1]]);
+        }
+        return true;
     }
 
     /**

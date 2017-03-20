@@ -40,6 +40,10 @@ $app->loadRoute(
     ]
 );
 
+$app->setSecurityRoute([
+    '/feed' => ['\Bijou\Example\Feed', 'check']
+]);
+
 $app->setWebSocket('\Bijou\Example\Chat');
 
 $app->addDecorator(new \Bijou\Example\Decorator\TimeDecorator());
