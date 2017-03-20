@@ -32,11 +32,11 @@ $app->loadRoute(
         '/user' => [
             ['GET', '/{id:[0-9]+}', ['\Bijou\Example\User', 'getInfo']],
             ['GET', '/b', 'bbbbb'],
-            ['POST', '/c', 'bbbbb'],
+            ['POST', '/', ['\Bijou\Example\User', 'updateUser']],
         ],
 
         ['GET', '/feed/{id:[0-9]+}',  ['\Bijou\Example\Feed', 'getInfo']],
-        ['POST', '/f', 'fffff'],
+        ['POST', '/feed', ['\Bijou\Example\Feed', 'create']],
     ]
 );
 

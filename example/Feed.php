@@ -23,4 +23,12 @@ class Feed extends BijouApi
             ['id' => $id]
         );
     }
+
+    public function create()
+    {
+        return json_encode([
+            'post' => $this->getRequest()->post,
+            'data' => $this->getRequest()->getBody(),
+        ]);
+    }
 }

@@ -14,10 +14,14 @@ class Request
 {
     private $request;
     private $header;
+    public $get;
+    public $post;
 
     public function __construct(Http\Request $request)
     {
         $this->request = $request;
+        $this->get = $this->request->get;
+        $this->post = $this->request->post;
     }
 
     /**
@@ -32,6 +36,10 @@ class Request
     public function getMethod()
     {
         return $this->request->server['request_method'];
+    }
+
+    public function getBody() {
+        return $this->request->rawContent();
     }
 
     /**
@@ -72,9 +80,9 @@ class Request
 
     public function __get($name)
     {
-        if (isset($this->request[$name])) {
+        if (isset($this->request->{$name})) {
 
-            return $this->request[$name];
+            return $this->request->{$name};
         }
     }
 
