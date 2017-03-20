@@ -10,6 +10,7 @@ namespace Bijou\Example;
 
 
 use Bijou\BijouApi;
+use Bijou\Example\AsyncTask\EmailTask;
 
 class Feed extends BijouApi
 {
@@ -24,6 +25,12 @@ class Feed extends BijouApi
         );
     }
 
+    public function postEmail()
+    {
+        $this->addAsyncTask(new EmailTask('zhangzy@bijou.com'));
+        return '123';
+    }
+
     public function create()
     {
         return json_encode([
@@ -36,4 +43,5 @@ class Feed extends BijouApi
     {
         return false;
     }
+
 }

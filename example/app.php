@@ -19,7 +19,8 @@ $app->loadConfig(
             'worker_num' => 4,    //worker process num
             'backlog' => 128,   //listen backlog
             'max_request' => 500,
-            'dispatch_mode' => 1
+            'dispatch_mode' => 1,
+            'task_worker_num' => 8
         ]
     ]
 );
@@ -37,6 +38,7 @@ $app->loadRoute(
 
         ['GET', '/feed/{id:[0-9]+}',  ['\Bijou\Example\Feed', 'getInfo']],
         ['POST', '/feed', ['\Bijou\Example\Feed', 'create']],
+        ['GET', '/feed/email', ['\Bijou\Example\Feed', 'postEmail']],
     ]
 );
 
