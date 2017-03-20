@@ -56,6 +56,7 @@ class Route
      * @throws MethodNotAllowException
      * @throws NoFoundException
      * @throws PHPException
+     * @throws ForbiddenException
      */
     public function dispatch(Request $request, Response $response, App $app)
     {
@@ -90,6 +91,11 @@ class Route
                 }
                 $handlerObject = new $handler[0]($app, $request, $response);
                 $response->header("Content-Type", "application/json");
+
+                if ('POST' == $method) {
+                    $vars = [$request->rawContent(), $request->post];
+                }
+
                 $response->end(call_user_func_array([$handlerObject, $handler[1]], $vars));
                 break;
         }
