@@ -20,6 +20,14 @@ class Response
     }
 
     /**
+     * 结束Http响应，发送数据
+     * @param string $data
+     */
+    public function send($data) {
+        $this->response->end($data);
+    }
+
+    /**
      * 启用Http-Chunk分段向浏览器发送数据
      * @param $data
      */
