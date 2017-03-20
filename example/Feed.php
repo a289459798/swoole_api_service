@@ -31,4 +31,9 @@ class Feed extends BijouApi
             'data' => $this->getRequest()->getBody(),
         ]);
     }
+
+    public function check()
+    {
+        return false;
+    }
 }

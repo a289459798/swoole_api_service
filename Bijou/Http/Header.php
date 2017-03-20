@@ -17,6 +17,11 @@ class Header
         $this->header = $header;
     }
 
+    public function getAuthorization() {
+
+        return $this->header['authorization'];
+    }
+
     public function __get($name)
     {
         if (isset($this->header[$name])) {

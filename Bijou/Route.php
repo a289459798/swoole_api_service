@@ -8,6 +8,7 @@
 
 namespace Bijou;
 
+use Bijou\Exception\ForbiddenException;
 use Bijou\Exception\MethodNotAllowException;
 use Bijou\Exception\NoFoundException;
 use Bijou\Exception\PHPException;
@@ -46,7 +47,6 @@ class Route
                 }
             }
         });
-
     }
 
     /**
@@ -76,6 +76,12 @@ class Route
                 throw new MethodNotAllowException($request, $response);
                 break;
             case Dispatcher::FOUND:
+
+                if(!$app->isSecurityRoute($pathInfo, $request, $response)) {
+                    throw new ForbiddenException($request, $response);
+                    break;
+                }
+
                 $handler = $routeInfo[1];
                 $vars = $routeInfo[2];
                 // ... call $handler with $vars
