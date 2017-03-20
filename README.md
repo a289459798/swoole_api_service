@@ -60,7 +60,7 @@ $app->loadRoute(
 );
 ```
 
-对应是路由回调，可以不需要继承任何class，get参数和post数据，通过方法参数传递
+路由回调，可以不需要继承任何class，get参数和post数据，通过方法参数传递
 
 ```
 class User
@@ -120,12 +120,13 @@ $app->setSecurityRoute([
     '/feed' => ['\Bijou\Example\Feed', 'check']
 ]);
 
-```
+...
 
 public function check()
 {
     return true;
 }
+```
 
 ## 高级功能
 
@@ -262,7 +263,7 @@ class TestService implements ServiceInterface
 
 ### 异步任务
 
-支持异步任务，用于处理一些耗时操作，比如发送推送、短信、邮件等，异步任务需要实现 `AsyncTaskInterface` 接口
+支持异步任务，用于处理一些耗时操作，比如发送推送、短信、邮件等，需要设置 `task_worker_num > 0`，异步任务需要实现 `AsyncTaskInterface` 接口
 
 ```
 class Feed extends BijouApi
