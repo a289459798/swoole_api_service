@@ -61,7 +61,6 @@ class Route
     {
 
         $app->requestStart($request);
-
         $method = $request->server['request_method'];
         $pathInfo = $request->server['path_info'];
 

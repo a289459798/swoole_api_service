@@ -8,7 +8,6 @@
 
 namespace Bijou\Example;
 
-
 class User
 {
     public function getInfo($id)
