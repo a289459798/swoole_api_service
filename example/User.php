@@ -10,14 +10,24 @@ namespace Bijou\Example;
 
 class User
 {
+    /**
+     * 获取用户信息
+     * @param int $id
+     * @return string
+     */
     public function getInfo($id)
     {
-
         return json_encode([
             'id' => $id
         ]);
     }
 
+    /**
+     * 创建用户
+     * @param $body
+     * @param $formData
+     * @return string
+     */
     public function create($body, $formData)
     {
         return json_encode([

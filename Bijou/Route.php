@@ -22,32 +22,54 @@ class Route
 {
 
     private $dispatcher;
+    private $routes;
 
     public function __construct()
     {
 
     }
 
+    /**
+     * @param array $routes
+     */
     public function loadRoute(Array $routes)
     {
-        $this->dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) use ($routes) {
-
-            foreach ($routes as $group => $route) {
-                if (!is_int($group)) {
-
-                    $r->addGroup($group, function (RouteCollector $r) use ($route) {
-
-                        foreach ($route as $rou) {
-                            $r->addRoute(strtoupper($rou[0]), $rou[1], $rou[2]);
-                        }
-
-                    });
-                } else {
-                    $r->addRoute(strtoupper($route[0]), $route[1], $route[2]);
-                }
-            }
-        });
+        $this->routes = $routes;
+        $this->dispatcher = FastRoute\simpleDispatcher([$this, 'simpleDispatcher']);
     }
+
+    /**
+     * @param RouteCollector $r
+     */
+    public function simpleDispatcher(RouteCollector $r)
+    {
+
+        foreach ($this->routes as $group => $route) {
+            if (!is_int($group)) {
+
+                $r->addGroup($group, function (RouteCollector $r) use ($route) {
+
+                    foreach ($route as $rou) {
+                        $r->addRoute(strtoupper($rou[0]), $rou[1], $rou[2]);
+                    }
+
+                });
+            } else {
+                $r->addRoute(strtoupper($route[0]), $route[1], $route[2]);
+
+            }
+        }
+
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoutes()
+    {
+        return $this->routes;
+    }
+
 
     /**
      * @param Request $request
@@ -78,7 +100,7 @@ class Route
                 break;
             case Dispatcher::FOUND:
 
-                if(!$app->isSecurityRoute($pathInfo, $request, $response)) {
+                if (!$app->isSecurityRoute($pathInfo, $request, $response)) {
                     throw new ForbiddenException($request, $response);
                     break;
                 }
@@ -86,7 +108,7 @@ class Route
                 $handler = $routeInfo[1];
                 $vars = $routeInfo[2];
                 // ... call $handler with $vars
-                if(!is_callable($handler)) {
+                if (!is_callable($handler)) {
                     throw new PHPException($request, $response);
                 }
                 $handlerObject = new $handler[0]($app, $request, $response);

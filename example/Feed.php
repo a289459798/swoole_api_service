@@ -15,6 +15,11 @@ use Bijou\Example\AsyncTask\EmailTask;
 class Feed extends BijouApi
 {
 
+    /**
+     * 获取信息
+     * @param int $id
+     * @return string
+     */
     public function getInfo($id)
     {
 
@@ -25,18 +30,31 @@ class Feed extends BijouApi
         );
     }
 
+    /**
+     * 获取发帖用户信息
+     * @param $id
+     * @return mixed
+     */
     public function getUser($id)
     {
 
         return $this->invokeApi(['\Bijou\Example\User', 'getInfo'], [$id]);
     }
 
+    /**
+     * 异步任务发送邮件
+     * @return string
+     */
     public function postEmail()
     {
         $this->addAsyncTask(new EmailTask('zhangzy@bijou.com'));
         return '123';
     }
 
+    /**
+     * 执行后台任务
+     * @return string
+     */
     public function service()
     {
         $this->startService('Bijou\Example\Service\TestService', 'action1', ['data' => 'data1']);
@@ -44,6 +62,10 @@ class Feed extends BijouApi
         return '123';
     }
 
+    /**
+     * 发表帖子
+     * @return string
+     */
     public function create()
     {
         return json_encode([
@@ -52,6 +74,10 @@ class Feed extends BijouApi
         ]);
     }
 
+    /**
+     * @Ignore
+     * @return bool
+     */
     public function check()
     {
         return true;

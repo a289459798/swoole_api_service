@@ -156,6 +156,11 @@ class App
         return true;
     }
 
+    public function getRoutes()
+    {
+        return $this->route->getRoutes();
+    }
+
     /**
      * 添加装饰者
      * @param Decorator $decorator

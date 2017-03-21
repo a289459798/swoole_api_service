@@ -33,7 +33,6 @@ $app->loadRoute(
     [
         '/user' => [
             ['GET', '/{id:[0-9]+}', ['\Bijou\Example\User', 'getInfo']],
-            ['GET', '/b', 'bbbbb'],
             ['POST', '/', ['\Bijou\Example\User', 'create']],
         ],
 
@@ -42,6 +41,7 @@ $app->loadRoute(
         ['GET', '/feed/email', ['\Bijou\Example\Feed', 'postEmail']],
         ['GET', '/feed/service', ['\Bijou\Example\Feed', 'service']],
         ['GET', '/feed/user/{id:[0-9]+}', ['\Bijou\Example\Feed', 'getUser']],
+        ['GET', '/export', ['\Bijou\Example\Export', 'getApi']],
     ]
 );
 

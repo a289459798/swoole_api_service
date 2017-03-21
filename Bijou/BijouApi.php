@@ -9,6 +9,8 @@
 namespace Bijou;
 
 use Bijou\Interfaces\AsyncTaskInterface;
+use Bijou\Interfaces\ExportApiInterface;
+use Bijou\Task\ExportApiTask;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 
@@ -49,6 +51,7 @@ abstract class BijouApi
     }
 
     /**
+     * 接口间的调用
      * @param array $callback
      * @param array $vars
      * @return mixed
@@ -58,6 +61,12 @@ abstract class BijouApi
 
         $handle = new $callback[0]($this->app, $this->request, $this->response);
         return call_user_func_array([$handle, $callback[1]], $vars);
+    }
+
+
+    public function exportApi(ExportApiInterface $exportApi)
+    {
+        $this->addAsyncTask(new ExportApiTask($exportApi, $this->app->getRoutes()));
     }
 
     /**
