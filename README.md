@@ -1,6 +1,6 @@
 # Bijou
 
-基于swoole的高性能API框架，你完全不用学习swoole，就可以得到swoole的性能，支持异步任务（AsyncTask） 和 基于EventLop 的后台常驻服务（Service）等高级功能
+基于swoole的高性能API框架，你完全不用学习swoole，就可以得到swoole的性能，支持异步任务（AsyncTask） 和 基于EventLop 的后台常驻服务（Service）等高级功能，支持api文档导出功能
 
 ### 使用
 
@@ -334,4 +334,22 @@ class EmailTask implements AsyncTaskInterface
         var_dump('onFinish');
     }
 }
+```
+内置Api文档导出异步任务
+
+```
+$this->exportApi(new ExportApi());
+```
+demo中有个例子`ExportApi`，如果要自定义实现 `ExportApiInterface`
+
+```
+interface ExportApiInterface
+{
+    /**
+     * @param array $apis
+     * @return mixed
+     */
+    public function export(Array $apis);
+}
+
 ```
