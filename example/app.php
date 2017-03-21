@@ -6,12 +6,13 @@
  * Date: 2017/3/15
  * Time: 16:30
  */
-
+$port1 = getenv('zzy1') ?? 9501;
+$port2 = getenv('zzy2') ?? 9502;
 $autoloader = require __DIR__ . '/../vendor/autoload.php';
 
 $autoloader->addPsr4('Bijou\Example\\', __DIR__);
 
-$app = new Bijou\App(['0.0.0.0', 9501], true);
+$app = new Bijou\App(['0.0.0.0', $port1], true);
 
 $app->loadConfig(
     [
@@ -25,7 +26,7 @@ $app->loadConfig(
     ]
 );
 
-$app->addListener(['0.0.0.0', 9502, SWOOLE_TCP]);
+$app->addListener(['0.0.0.0', $port2, SWOOLE_TCP]);
 
 
 $app->loadRoute(
