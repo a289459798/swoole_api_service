@@ -40,6 +40,7 @@ $app->loadRoute(
         ['POST', '/feed', ['\Bijou\Example\Feed', 'create']],
         ['GET', '/feed/email', ['\Bijou\Example\Feed', 'postEmail']],
         ['GET', '/feed/service', ['\Bijou\Example\Feed', 'service']],
+        ['GET', '/feed/user/{id:[0-9]+}', ['\Bijou\Example\Feed', 'getUser']],
     ]
 );
 

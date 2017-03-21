@@ -25,6 +25,12 @@ class Feed extends BijouApi
         );
     }
 
+    public function getUser($id)
+    {
+
+        return $this->invokeApi(['\Bijou\Example\User', 'getInfo'], [$id]);
+    }
+
     public function postEmail()
     {
         $this->addAsyncTask(new EmailTask('zhangzy@bijou.com'));
