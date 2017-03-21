@@ -41,7 +41,7 @@ $app->addListener(['0.0.0.0', 9502, SWOOLE_TCP]);
 
 ### 路由
 
-基于nikic/fast-route
+基于nikic/fast-route，输出方式可以直接`return`，也可以使用`response->send`，当使用`return`的时候，接口就是一个公共方法，可以很方便其他api调用
 
 ```
 $app->loadRoute(
@@ -109,6 +109,41 @@ class Feed extends BijouApi
         ]);
     }
 
+}
+```
+
+接口之间调用
+
+```
+class User
+{
+    public function getInfo($id)
+    {
+
+        return json_encode([
+            'id' => $id
+        ]);
+    }
+
+    public function create($body, $formData)
+    {
+        return json_encode([
+            'body' => $body,
+            'form' => $formData
+        ]);
+    }
+}
+
+...
+
+class Feed extends BijouApi
+{
+
+    public function getUser($id)
+    {
+        // 调用user api的方法
+        return $this->invokeApi(['\Bijou\Example\User', 'getInfo'], [$id]);
+    }
 }
 ```
 

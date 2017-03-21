@@ -49,6 +49,18 @@ abstract class BijouApi
     }
 
     /**
+     * @param array $callback
+     * @param array $vars
+     * @return mixed
+     */
+    public function invokeApi(Array $callback, Array $vars)
+    {
+
+        $handle = new $callback[0]($this->app, $this->request, $this->response);
+        return call_user_func_array([$handle, $callback[1]], $vars);
+    }
+
+    /**
      * 执行一个异步任务
      * @param AsyncTaskInterface $asyncTask
      */
