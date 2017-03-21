@@ -335,11 +335,12 @@ class EmailTask implements AsyncTaskInterface
     }
 }
 ```
-内置Api文档导出异步任务
+#### 内置Api文档导出异步任务
 
 ```
 $this->exportApi(new ExportApi());
 ```
+
 demo中有个例子`ExportApi`，如果要自定义实现 `ExportApiInterface`
 
 ```
@@ -352,4 +353,30 @@ interface ExportApiInterface
     public function export(Array $apis);
 }
 
+```
+api相关信息通过注解来声明
+
+```
+/**
+ * 获取发帖用户信息
+ * @param $id
+ * @return mixed
+ */
+public function getUser($id)
+{
+
+    return $this->invokeApi(['\Bijou\Example\User', 'getInfo'], [$id]);
+}
+```
+对于不想导出的api，加 `@Ignore` 注解
+
+```
+/**
+ * @Ignore
+ * @return bool
+ */
+public function check()
+{
+    return true;
+}
 ```
