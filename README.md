@@ -4,7 +4,7 @@
 
 ### 使用
 
-```
+```php
 $autoloader = require __DIR__ . '/../vendor/autoload.php';
 
 $autoloader->addPsr4('Bijou\Example\\', __DIR__);
@@ -19,7 +19,7 @@ $app->run();
 ### 服务器配置
 与swoole完全一致，[https://wiki.swoole.com/wiki/page/274.html](https://wiki.swoole.com/wiki/page/274.html)
 
-```
+```php
 $app->loadConfig(
     [
         'server' => [
@@ -35,7 +35,7 @@ $app->loadConfig(
 
 ### 多端口监听
 
-```
+```php
 $app->addListener(['0.0.0.0', 9502, SWOOLE_TCP]);
 ```
 
@@ -43,7 +43,7 @@ $app->addListener(['0.0.0.0', 9502, SWOOLE_TCP]);
 
 基于nikic/fast-route，输出方式可以直接`return`，也可以使用`response->send`，当使用`return`的时候，接口就是一个公共方法，可以很方便其他api调用
 
-```
+```php
 $app->loadRoute(
     [
         '/user' => [
@@ -62,7 +62,7 @@ $app->loadRoute(
 
 路由回调，可以不需要继承任何class，get参数和post数据，通过方法参数传递
 
-```
+```php
 class User
 {
 	// GET
@@ -87,7 +87,7 @@ class User
 
 如果需要获取request 和 response 相关，需要继承 `BijouApi`
 
-```
+```php
 class Feed extends BijouApi
 {
 
@@ -114,7 +114,7 @@ class Feed extends BijouApi
 
 接口之间调用
 
-```
+```php
 class User
 {
     public function getInfo($id)
@@ -150,7 +150,7 @@ class Feed extends BijouApi
 ### api安全
 可以在执行路由回调之前，注册一个handler，来做验证，比如auth或sign，回调函数必须返回true，否则会抛出403
 
-```
+```php
 $app->setSecurityRoute([
     '/feed' => ['\Bijou\Example\Feed', 'check']
 ]);
@@ -169,7 +169,7 @@ public function check()
 
 很简单的实现websocket的支持
 
-```
+```php
 // 第二个参数true，表示支持websocket
 $app = new Bijou\App(['0.0.0.0', 9501], true);
 
@@ -205,7 +205,7 @@ class Chat
 
 注册该钩子后，api请求完成之后，会回调，可以很方便统计一次完整的请求所需要记录的东西，需要继承 `RunTimeDecorator`
 
-```
+```php
 $app->addDecorator(new \Bijou\Example\Decorator\TimeDecorator());
 
 ...
@@ -224,7 +224,7 @@ class TimeDecorator extends RunTimeDecorator
 
 该钩子可以记录api请求过程中，出现的所有错误，同时可以自定义http response 的错误处理（目前内置了一些默认的处理），需要继承 `ExceptionDecorator`
 
-```
+```php
 $app->addDecorator(new \Bijou\Example\Decorator\ExceptionDecorator());
 
 ...
@@ -251,7 +251,7 @@ class ExceptionDecorator extends \Bijou\Decorator\ExceptionDecorator
 
 支持通过静态注册常驻后台的service，可以添加多个，需要实现 `ServiceInterface` 接口
 
-```
+```php
 // 注册service
 $app->addService(new \Bijou\Example\Service\TestService());
 
@@ -300,7 +300,7 @@ class TestService implements ServiceInterface
 
 支持异步任务，用于处理一些耗时操作，比如发送推送、短信、邮件等，需要设置 `task_worker_num > 0`，异步任务需要实现 `AsyncTaskInterface` 接口
 
-```
+```php
 class Feed extends BijouApi
 {
     public function postEmail()
@@ -337,13 +337,13 @@ class EmailTask implements AsyncTaskInterface
 ```
 #### 内置Api文档导出异步任务
 
-```
+```php
 $this->exportApi(new ExportApi());
 ```
 
 demo中有个例子`ExportApi`，如果要自定义实现 `ExportApiInterface`
 
-```
+```php
 interface ExportApiInterface
 {
     /**
@@ -356,7 +356,7 @@ interface ExportApiInterface
 ```
 api相关信息通过注解来声明
 
-```
+```php
 /**
  * 获取发帖用户信息
  * @param $id
@@ -370,7 +370,7 @@ public function getUser($id)
 ```
 对于不想导出的api，加 `@Ignore` 注解
 
-```
+```php
 /**
  * @Ignore
  * @return bool

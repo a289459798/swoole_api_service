@@ -53,8 +53,8 @@ class App
         $this->requests = [];
         $this->process = [];
         $this->route = new Route();
-        $mode = $ips[2] ?? SWOOLE_PROCESS;
-        $flag = $ips[3] ?? SWOOLE_SOCK_TCP;
+        $mode = isset($ips[2]) ? $ips[2] : SWOOLE_PROCESS;
+        $flag = isset($ips[3]) ? $ips[3] : SWOOLE_SOCK_TCP;
 
         if ($openWebSocket) {
 
