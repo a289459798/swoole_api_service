@@ -53,7 +53,7 @@ $app->setWebSocket('\Bijou\Example\Chat');
 
 $app->addDecorator(new \Bijou\Example\Decorator\TimeDecorator());
 $app->addDecorator(new \Bijou\Example\Decorator\ExceptionDecorator());
-
+$app->addDecorator(new \Bijou\Example\Decorator\ResponseDecorator());
 
 $app->addService(new \Bijou\Example\Service\TestService());
 
