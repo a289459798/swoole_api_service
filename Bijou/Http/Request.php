@@ -20,8 +20,8 @@ class Request
     public function __construct(Http\Request $request)
     {
         $this->request = $request;
-        $this->get = $this->request->get;
-        $this->post = $this->request->post;
+        $this->get = isset($this->request->get) ? $this->request->get : [];
+        $this->post = isset($this->request->post) ? $this->request->get : [];
     }
 
     /**

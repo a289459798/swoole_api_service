@@ -69,6 +69,11 @@ abstract class BijouApi
         $this->addAsyncTask(new ExportApiTask($exportApi, $this->app->getRoutes()));
     }
 
+    public function pool($name)
+    {
+        return $this->app->pool($name);
+    }
+
     /**
      * 执行一个异步任务
      * @param AsyncTaskInterface $asyncTask

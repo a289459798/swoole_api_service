@@ -42,6 +42,7 @@ $app->loadRoute(
         ['GET', '/feed/service', ['\Bijou\Example\Feed', 'service']],
         ['GET', '/feed/user/{id:[0-9]+}', ['\Bijou\Example\Feed', 'getUser']],
         ['GET', '/export', ['\Bijou\Example\Export', 'getApi']],
+        ['GET', '/pool/mysql', ['\Bijou\Example\Pool', 'mysql']],
     ]
 );
 
@@ -56,5 +57,7 @@ $app->addDecorator(new \Bijou\Example\Decorator\ExceptionDecorator());
 
 
 $app->addService(new \Bijou\Example\Service\TestService());
+
+$app->addPool('mysql', new \Bijou\Example\Driver\Mysql());
 
 $app->run();

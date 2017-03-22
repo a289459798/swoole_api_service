@@ -9,6 +9,7 @@
 
 namespace Bijou;
 
+use Bijou\Core\PoolManager;
 use Bijou\Core\Service;
 use Bijou\Core\ServiceManager;
 use Bijou\Core\TaskManager;
@@ -21,6 +22,7 @@ use Bijou\Exception\NoFoundException;
 use Bijou\Exception\PHPException;
 use Bijou\Http\Frame;
 use Bijou\Interfaces\AsyncTaskInterface;
+use Bijou\Interfaces\DriverInterface;
 use Bijou\Interfaces\ServiceInterface;
 use Swoole\Http;
 use Swoole\Process;
@@ -63,8 +65,6 @@ class App
             $this->server = new Http\Server($ips[0], $ips[1], $mode, $flag);
         }
         $this->server->on("request", [$this, 'onRequest']);
-        $this->server->on("request", [$this, 'onRequest']);
-
     }
 
     /**
@@ -225,6 +225,29 @@ class App
     }
 
     /**
+     * 添加连接池
+     * @param $name
+     * @param DriverInterface $driver
+     */
+    public function addPool($name, DriverInterface $driver)
+    {
+        if (!$this->server->poolManager) {
+            $this->server->poolManager = new PoolManager();
+        }
+
+        $this->server->poolManager->addDriver($name, $driver);
+    }
+
+    /**
+     * 调用连接池连接
+     * @param $path
+     */
+    public function pool($path)
+    {
+        return $this->server->poolManager->driver($path);
+    }
+
+    /**
      * @param Request $request
      */
     public function requestStart(Request $request)
@@ -245,7 +268,7 @@ class App
             if (isset($this->requests[$request->fd])) {
                 $this->runTimeDecorator->setRequest(new \Bijou\Http\Request($request));
                 $endTime = $this->runTimeDecorator->getCurrentTime();
-                $this->runTimeDecorator->setRunTime($endTime - $this->requests[$request->fd]);
+                $this->runTimeDecorator->setRunTime(round($endTime - $this->requests[$request->fd], 4));
                 unset($this->requests[$request->fd]);
             }
         }
