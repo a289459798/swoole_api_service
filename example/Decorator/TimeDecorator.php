@@ -15,6 +15,6 @@ class TimeDecorator extends RunTimeDecorator
 
     public function setRunTime($time)
     {
-        echo "api:" . $this->getRequest()->getApi() . "   运行时间:" . $time . '\r\n';
+        echo "api:" . $this->getRequest()->getApi() . "  fd:" . $this->getRequest()->getClient() . "   运行时间:" . $time . '\r\n';
     }
 }
