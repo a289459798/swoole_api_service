@@ -54,6 +54,7 @@ class Pool
         if ($this->allowPoolSize > $this->freePoolSize) {
             $this->freePool->enqueue($driver);
             $this->freePoolSize++;
+            $driver->release();
         }
     }
 

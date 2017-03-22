@@ -22,4 +22,15 @@ interface PoolInterface
      * @return int
      */
     public function maxPoolSize();
+
+    /**
+     * 释放资源
+     * @return mixed
+     */
+    public function release();
+
+    /**
+     * @return mixed
+     */
+    public function __clone();
 }

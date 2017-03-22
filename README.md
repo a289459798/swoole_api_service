@@ -380,3 +380,71 @@ public function check()
     return true;
 }
 ```
+
+### 对象池
+
+适用于频繁使用的对象，目前只支持静态注册，目前处于测试阶段
+
+```php
+$app->addPool('mysql', new \Bijou\Example\Driver\Mysql());
+
+```
+
+需要实现`PoolInterface`接口
+
+```php
+class Mysql implements PoolInterface
+{
+
+    public function sleep($size)
+    {
+        for($i = 0; $i < $size; $i++) {
+
+    }
+        return 'mysql 测试连接池';
+    }
+
+    /**
+     * 释放资源
+     * @return mixed
+     */
+    public function release()
+    {
+    }
+
+    /**
+     * @return mixed
+     */
+    public function __clone()
+    {
+    }
+
+    /**
+     * 每个进程允许的最大空闲连接数
+     * @return int
+     */
+    public function allowPoolSize()
+    {
+        return 20;
+    }
+
+    /**
+     * 每个进程运行的最大连接数
+     * @return int
+     */
+    public function maxPoolSize()
+    {
+        return 10;
+    }
+}
+```
+
+调用
+
+```php
+$this->pool('mysql')->sleep(1000000000);
+```
+
+### 开发者
+
+zhangzy QQ:289459798

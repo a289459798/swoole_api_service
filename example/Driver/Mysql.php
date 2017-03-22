@@ -22,14 +22,36 @@ class Mysql implements PoolInterface
         return 'mysql 测试连接池';
     }
 
-    public function allowPoolSize()
+    /**
+     * 释放资源
+     * @return mixed
+     */
+    public function release()
     {
-
-        return 10;
     }
 
+    /**
+     * @return mixed
+     */
+    public function __clone()
+    {
+    }
+
+    /**
+     * 每个进程允许的最大空闲连接数
+     * @return int
+     */
+    public function allowPoolSize()
+    {
+        return 20;
+    }
+
+    /**
+     * 每个进程运行的最大连接数
+     * @return int
+     */
     public function maxPoolSize()
     {
-        return 100;
+        return 10;
     }
 }
