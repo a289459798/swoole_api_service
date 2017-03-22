@@ -8,15 +8,18 @@
 
 namespace Bijou\Http;
 
+use Bijou\Decorator\ResponseDecorator;
 use Swoole\Http;
 
 class Response
 {
     private $response;
+    private $responseDecorator;
 
-    public function __construct(Http\Response $response)
+    public function __construct(Http\Response $response, ResponseDecorator $responseDecorator = null)
     {
         $this->response = $response;
+        $this->responseDecorator = $responseDecorator;
     }
 
     /**
@@ -25,10 +28,14 @@ class Response
      */
     public function send($data)
     {
-        if (is_array($data)) {
-            $data = json_encode($data);
+        if ($this->responseDecorator) {
+            $this->response->end($this->responseDecorator->format($data));
+        } else {
+            if (is_array($data)) {
+                $data = json_encode($data);
+            }
+            $this->response->end($data);
         }
-        $this->response->end($data);
     }
 
     /**

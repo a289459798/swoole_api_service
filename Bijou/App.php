@@ -15,6 +15,7 @@ use Bijou\Core\ServiceManager;
 use Bijou\Core\TaskManager;
 use Bijou\Decorator\Decorator;
 use Bijou\Decorator\ExceptionDecorator;
+use Bijou\Decorator\ResponseDecorator;
 use Bijou\Decorator\RunTimeDecorator;
 use Bijou\Decorator\TimeDecorator;
 use Bijou\Exception\MethodNotAllowException;
@@ -38,6 +39,7 @@ class App
     private $route;
     private $runTimeDecorator;
     private $exceptionDecorator;
+    private $responseDecorator;
     private $securityRoute;
     private $taskManager;
     private $serviceManager;
@@ -171,6 +173,8 @@ class App
             $this->runTimeDecorator = $decorator;
         } else if ($decorator instanceof ExceptionDecorator) {
             $this->exceptionDecorator = $decorator;
+        } else if ($decorator instanceof ResponseDecorator) {
+            $this->responseDecorator = $decorator;
         }
     }
 
@@ -178,7 +182,7 @@ class App
     {
 
         $bijouRequest = new Request($request);
-        $bijouResponse = new Response($response);
+        $bijouResponse = new Response($response, $this->responseDecorator);
         try {
             $this->route->dispatch($bijouRequest, $bijouResponse, $this);
         } catch (\Exception $e) {

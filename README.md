@@ -270,6 +270,35 @@ class TimeDecorator extends RunTimeDecorator
 }
 ```
 
+### 自定义response格式
+
+可以通过注册 `ResponseDecorator` 来统一所有api返回数据的规范，与业务逻辑分离
+
+需要先静态注册
+```php
+$app->addDecorator(new \Bijou\Example\Decorator\ResponseDecorator());
+```
+
+```php
+class ResponseDecorator extends \Bijou\Decorator\ResponseDecorator
+{
+
+    /**
+     * 自定义response 的数据格式
+     * @param $data
+     * @return mixed
+     */
+    public function format($data)
+    {
+        return json_encode([
+            'code' => isset($data['code']) ? $data['code'] : 200,
+            'message' => isset($data['message']) ? $data['message'] : '',
+            'data' => $data
+        ]);
+    }
+}
+```
+
 #### 错误处理
 
 该钩子可以记录api请求过程中，出现的所有错误，同时可以自定义http response 的错误处理（目前内置了一些默认的处理），需要继承 `ExceptionDecorator`
