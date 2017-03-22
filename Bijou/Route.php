@@ -76,9 +76,9 @@ class Route
      * @param callable $callback
      * @return bool|callable
      */
-    public function getSecurityRouters(callable $callback)
+    public function getSecurityRouter(callable $callback)
     {
-        if (isset($this->securityRouters[join("_", $callback)])) {
+        if (count($this->securityRouters) > 0 && isset($this->securityRouters[join("_", $callback)])) {
             return $this->securityRouters[join("_", $callback)];
         }
         return false;
@@ -94,7 +94,7 @@ class Route
      */
     private function isSecurityRoute($callback, App $app, Request $request, Response $response)
     {
-        if ($handler = $this->getSecurityRouters($callback)) {
+        if ($handler = $this->getSecurityRouter($callback)) {
 
             $handlerObject = new $handler[0]($app, $request, $response);
             return call_user_func([$handlerObject, $handler[1]]);
