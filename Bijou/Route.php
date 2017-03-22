@@ -12,11 +12,11 @@ use Bijou\Exception\ForbiddenException;
 use Bijou\Exception\MethodNotAllowException;
 use Bijou\Exception\NoFoundException;
 use Bijou\Exception\PHPException;
+use Bijou\Http\Request;
+use Bijou\Http\Response;
 use FastRoute;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
 
 class Route
 {
@@ -83,9 +83,15 @@ class Route
     public function dispatch(Request $request, Response $response, App $app)
     {
 
-        $app->requestStart($request);
-        $method = $request->server['request_method'];
-        $pathInfo = $request->server['path_info'];
+
+        $requestStart = $app->requestStart($request);
+        if (true !== $requestStart) {
+
+            $response->send($requestStart);
+            return;
+        }
+        $method = $request->getMethod();
+        $pathInfo = $request->getApi();
 
         $routeInfo = $this->dispatcher->dispatch($method, $pathInfo);
 
@@ -112,13 +118,12 @@ class Route
                     throw new PHPException($request, $response);
                 }
                 $handlerObject = new $handler[0]($app, $request, $response);
-                $response->header("Content-Type", "application/json");
 
                 if ('POST' == $method) {
-                    $vars = [$request->rawContent(), $request->post];
+                    $vars = [$request->getBody(), $request->post];
                 }
 
-                $response->end(call_user_func_array([$handlerObject, $handler[1]], $vars));
+                $response->send(call_user_func_array([$handlerObject, $handler[1]], $vars));
                 break;
         }
 

@@ -8,8 +8,8 @@
 
 namespace Bijou\Exception;
 
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Bijou\Http\Request;
+use Bijou\Http\Response;
 
 class PHPException extends BijouException
 {

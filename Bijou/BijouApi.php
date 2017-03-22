@@ -30,8 +30,8 @@ abstract class BijouApi
     public function __construct($app, $request, $response)
     {
         $this->app = $app;
-        $this->request = new \Bijou\Http\Request($request);
-        $this->response = new \Bijou\Http\Response($response);
+        $this->request = $request;
+        $this->response = $response;
     }
 
     /**

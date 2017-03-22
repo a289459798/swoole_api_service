@@ -20,10 +20,23 @@ class Response
     }
 
     /**
-     * 结束Http响应，发送数据
-     * @param string $data
+     * 结束Http响应，发送json数据
+     * @param array|string $data
      */
-    public function send($data) {
+    public function send($data)
+    {
+        if (is_array($data)) {
+            $data = json_encode($data);
+        }
+        $this->response->end($data);
+    }
+
+    /**
+     * 结束http响应，发送文本数据
+     * @param $data
+     */
+    public function sendText($data)
+    {
         $this->response->end($data);
     }
 
