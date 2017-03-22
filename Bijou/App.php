@@ -21,14 +21,15 @@ use Bijou\Exception\MethodNotAllowException;
 use Bijou\Exception\NoFoundException;
 use Bijou\Exception\PHPException;
 use Bijou\Http\Frame;
+use Bijou\Http\Request;
+use Bijou\Http\Response;
 use Bijou\Interfaces\AsyncTaskInterface;
 use Bijou\Interfaces\DriverInterface;
+use Bijou\Interfaces\PoolInterface;
 use Bijou\Interfaces\ServiceInterface;
 use Swoole\Http;
 use Swoole\Process;
 use Swoole\WebSocket;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
 
 class App
 {
@@ -37,7 +38,6 @@ class App
     private $route;
     private $runTimeDecorator;
     private $exceptionDecorator;
-    private $requests;
     private $securityRoute;
     private $taskManager;
     private $serviceManager;
@@ -52,7 +52,6 @@ class App
     public function __construct($ips, $openWebSocket = false)
     {
 
-        $this->requests = [];
         $this->process = [];
         $this->route = new Route();
         $mode = isset($ips[2]) ? $ips[2] : SWOOLE_PROCESS;
@@ -175,15 +174,17 @@ class App
         }
     }
 
-    public function onRequest(Request $request, Response $response)
+    public function onRequest(Http\Request $request, Http\Response $response)
     {
 
+        $bijouRequest = new Request($request);
+        $bijouResponse = new Response($response);
         try {
-            $this->route->dispatch($request, $response, $this);
+            $this->route->dispatch($bijouRequest, $bijouResponse, $this);
         } catch (\Exception $e) {
-            $this->handlerException($e, $request, $response);
+            $this->handlerException($e, $bijouRequest, $bijouResponse);
         } catch (\Throwable $e) {
-            $this->handlerException($e, $request, $response);
+            $this->handlerException($e, $bijouRequest, $bijouResponse);
         }
     }
 
@@ -227,9 +228,9 @@ class App
     /**
      * 添加连接池
      * @param $name
-     * @param DriverInterface $driver
+     * @param PoolInterface $driver
      */
-    public function addPool($name, DriverInterface $driver)
+    public function addPool($name, PoolInterface $driver)
     {
         if (!$this->server->poolManager) {
             $this->server->poolManager = new PoolManager();
@@ -249,13 +250,15 @@ class App
 
     /**
      * @param Request $request
+     * @return bool
      */
     public function requestStart(Request $request)
     {
         if (isset($this->runTimeDecorator)) {
-
-            $this->requests[$request->fd] = $this->runTimeDecorator->getCurrentTime();
+            $this->runTimeDecorator->setRequest($request);
+            return $this->runTimeDecorator->requestStart();
         }
+        return true;
     }
 
     /**
@@ -265,12 +268,8 @@ class App
     {
 
         if (isset($this->runTimeDecorator)) {
-            if (isset($this->requests[$request->fd])) {
-                $this->runTimeDecorator->setRequest(new \Bijou\Http\Request($request));
-                $endTime = $this->runTimeDecorator->getCurrentTime();
-                $this->runTimeDecorator->setRunTime(round($endTime - $this->requests[$request->fd], 4));
-                unset($this->requests[$request->fd]);
-            }
+            $this->runTimeDecorator->setRequest($request);
+            $this->runTimeDecorator->requestEnd();
         }
     }
 
@@ -284,8 +283,8 @@ class App
     {
         $this->requestEnd($request);
         if (isset($this->exceptionDecorator)) {
-            $this->exceptionDecorator->setRequest(new \Bijou\Http\Request($request));
-            $response->end(json_encode($this->exceptionDecorator->throwException($throwable)));
+            $this->exceptionDecorator->setRequest($request);
+            $response->send($this->exceptionDecorator->throwException($throwable));
             return true;
         }
 

@@ -18,7 +18,6 @@ class ExceptionDecorator extends \Bijou\Decorator\ExceptionDecorator
      */
     public function throwException(\Throwable $throwable)
     {
-        echo 'file:' . $throwable->getFile() . '--line:' . $throwable->getLine();
         return [
             'code' => '自定义提示代码/默认代码:' . $throwable->getCode(),
             'message' => '自定义提示错误信息/默认信息:' . $throwable->getMessage(),

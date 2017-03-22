@@ -8,8 +8,9 @@
 
 namespace Bijou\Exception;
 
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+
+use Bijou\Http\Request;
+use Bijou\Http\Response;
 
 abstract class BijouException extends \Exception
 {
@@ -23,7 +24,7 @@ abstract class BijouException extends \Exception
      * @param Request $request
      * @param Response $response
      */
-    public function __construct($message, $code, $request, $response)
+    public function __construct($message, $code, Request $request, Response $response)
     {
         parent::__construct($message, $code);
         $this->request = $request;
@@ -43,11 +44,11 @@ abstract class BijouException extends \Exception
      */
     public function throwException(\Throwable $throwable)
     {
-        $this->getResponse()->status($this->code);
-        $this->getResponse()->end(json_encode([
+        $this->getResponse()->setStatus($this->code);
+        $this->getResponse()->send([
             'code' => $this->code,
             'message' => $this->message
-        ]));
+        ]);
     }
 
 }

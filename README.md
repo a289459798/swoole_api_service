@@ -41,7 +41,7 @@ $app->addListener(['0.0.0.0', 9502, SWOOLE_TCP]);
 
 ### 路由
 
-基于nikic/fast-route，输出方式可以直接`return`，也可以使用`response->send`，当使用`return`的时候，接口就是一个公共方法，可以很方便其他api调用
+基于nikic/fast-route，输出方式可以直接`return`，如果是数组会自动`json_encode`，也可以使用`response->send`，当使用`return`的时候，接口就是一个公共方法，可以很方便其他api调用
 
 ```php
 $app->loadRoute(
@@ -69,18 +69,18 @@ class User
     public function getInfo($id)
     {
 
-        return json_encode([
+        return [
             'id' => $id
-        ]);
+        ];
     }
 
 	// POST
     public function create($body, $formData)
     {
-        return json_encode([
+        return [
             'body' => $body,
             'form' => $formData
-        ]);
+        ];
     }
 }
 ```
@@ -96,17 +96,15 @@ class Feed extends BijouApi
 
         $this->getResponse()->sent("12121212");
 
-        return json_encode(
-            ['id' => $id]
-        );
+        return ['id' => $id];
     }
 
     public function create()
     {
-        return json_encode([
+        return [
             'post' => $this->getRequest()->post,
             'data' => $this->getRequest()->getBody(),
-        ]);
+        ];
     }
 
 }
@@ -120,17 +118,17 @@ class User
     public function getInfo($id)
     {
 
-        return json_encode([
+        return [
             'id' => $id
-        ]);
+        ];
     }
 
     public function create($body, $formData)
     {
-        return json_encode([
+        return [
             'body' => $body,
             'form' => $formData
-        ]);
+        ];
     }
 }
 
@@ -203,19 +201,71 @@ class Chat
 
 #### api请求
 
-注册该钩子后，api请求完成之后，会回调，可以很方便统计一次完整的请求所需要记录的东西，需要继承 `RunTimeDecorator`
+注册该钩子后，api请求过来和response完成之后都会会回调， 可以通过 `requestStart`来终止本次请求，只有返回`true`的时候，请求才会继续，也可以很方便统计一次完整的请求所需要记录的东西，需要继承 `RunTimeDecorator`
 
 ```php
 $app->addDecorator(new \Bijou\Example\Decorator\TimeDecorator());
 
 ...
 
+abstract class RunTimeDecorator extends Decorator
+{
+    /**
+     * 请求开始之前回调，可验证请求的安全性，返回true 正常请求，否则 请求终止，并输出返回内容
+     * @return bool
+     */
+    abstract public function requestStart();
+
+    /**
+     * 请求完成之后回调之后回调
+     * @return mixed
+     */
+    abstract public function requestEnd();
+}
+
 class TimeDecorator extends RunTimeDecorator
 {
+    private $requests;
 
-    public function setRunTime($time)
+    public function __construct()
     {
-        echo "api:" . $this->getRequest()->getApi() . "   运行时间:" . $time . '\r\n';
+        $this->requests = [];
+    }
+
+    private function setRunTime($time)
+    {
+        var_dump("api:" . $this->getRequest()->getApi() . "   运行时间:" . $time);
+    }
+
+    private function getCurrentTime()
+    {
+        list ($msec, $sec) = explode(" ", microtime());
+        return (float)$msec + (float)$sec;
+    }
+
+    /**
+     * 请求开始之前回调，可验证请求的安全性，返回true 正常请求，否则 请求终止，并输出返回内容
+     * @return bool
+     */
+    public function requestStart()
+    {
+        $this->requests[$this->getRequest()->getClient()] = $this->getCurrentTime();
+
+        return true;
+//        return [
+//            '验证错误'
+//        ];
+    }
+
+    /**
+     * 请求完成之后回调之后回调
+     * @return mixed
+     */
+    public function requestEnd()
+    {
+        $endTime = $this->getCurrentTime();
+        $this->setRunTime(round($endTime - $this->requests[$this->getRequest()->getClient()], 4));
+        unset($this->requests[$this->getRequest()->getClient()]);
     }
 }
 ```

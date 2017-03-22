@@ -25,9 +25,7 @@ class Feed extends BijouApi
 
         $this->getResponse()->sent("12121212");
 
-        return json_encode(
-            ['id' => $id]
-        );
+        return ['id' => $id];
     }
 
     /**
@@ -68,10 +66,10 @@ class Feed extends BijouApi
      */
     public function create()
     {
-        return json_encode([
+        return [
             'post' => $this->getRequest()->post,
             'data' => $this->getRequest()->getBody(),
-        ]);
+        ];
     }
 
     /**

@@ -17,9 +17,9 @@ class User
      */
     public function getInfo($id)
     {
-        return json_encode([
+        return [
             'id' => $id
-        ]);
+        ];
     }
 
     /**
@@ -30,9 +30,9 @@ class User
      */
     public function create($body, $formData)
     {
-        return json_encode([
+        return [
             'body' => $body,
             'form' => $formData
-        ]);
+        ];
     }
 }
