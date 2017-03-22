@@ -22,11 +22,13 @@ class Route
 {
 
     private $dispatcher;
+    private $securityRouters;
     private $routes;
 
     public function __construct()
     {
-
+        $this->routes = [];
+        $this->securityRouters = [];
     }
 
     /**
@@ -34,7 +36,7 @@ class Route
      */
     public function loadRoute(Array $routes)
     {
-        $this->routes = $routes;
+        $this->routes += $routes;
         $this->dispatcher = FastRoute\simpleDispatcher([$this, 'simpleDispatcher']);
     }
 
@@ -51,15 +53,53 @@ class Route
 
                     foreach ($route as $rou) {
                         $r->addRoute(strtoupper($rou[0]), $rou[1], $rou[2]);
+                        $this->parseRoute($rou);
                     }
 
                 });
             } else {
                 $r->addRoute(strtoupper($route[0]), $route[1], $route[2]);
-
+                $this->parseRoute($route);
             }
         }
 
+    }
+
+    private function parseRoute($route)
+    {
+        if (isset($route['security'])) {
+            $this->securityRouters[join("_", $route[2])] = $route['security'];
+        }
+    }
+
+    /**
+     * @param callable $callback
+     * @return bool|callable
+     */
+    public function getSecurityRouters(callable $callback)
+    {
+        if (isset($this->securityRouters[join("_", $callback)])) {
+            return $this->securityRouters[join("_", $callback)];
+        }
+        return false;
+    }
+
+    /**
+     * 验证是否是安全
+     * @param $callback
+     * @param App $app
+     * @param Request $request
+     * @param Response $response
+     * @return bool
+     */
+    private function isSecurityRoute($callback, App $app, Request $request, Response $response)
+    {
+        if ($handler = $this->getSecurityRouters($callback)) {
+
+            $handlerObject = new $handler[0]($app, $request, $response);
+            return call_user_func([$handlerObject, $handler[1]]);
+        }
+        return true;
     }
 
     /**
@@ -106,13 +146,14 @@ class Route
                 break;
             case Dispatcher::FOUND:
 
-                if (!$app->isSecurityRoute($pathInfo, $request, $response)) {
+                $handler = $routeInfo[1];
+                $vars = $routeInfo[2];
+
+                if (!$this->isSecurityRoute($handler, $app, $request, $response)) {
                     throw new ForbiddenException($request, $response);
                     break;
                 }
 
-                $handler = $routeInfo[1];
-                $vars = $routeInfo[2];
                 // ... call $handler with $vars
                 if (!is_callable($handler)) {
                     throw new PHPException($request, $response);

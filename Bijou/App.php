@@ -40,7 +40,6 @@ class App
     private $runTimeDecorator;
     private $exceptionDecorator;
     private $responseDecorator;
-    private $securityRoute;
     private $taskManager;
     private $serviceManager;
     private $process;
@@ -130,33 +129,6 @@ class App
         $this->route->loadRoute($route);
     }
 
-    /**
-     * 设置需要验证的路由
-     * @param array $security
-     */
-    public function setSecurityRoute(Array $security)
-    {
-        $this->securityRoute = $security;
-    }
-
-    /**
-     * 验证是否是安全
-     * @param $route
-     * @param Request $request
-     * @param Response $response
-     * @return bool
-     */
-    public function isSecurityRoute($route, Request $request, Response $response)
-    {
-        if ($this->securityRoute && isset($this->securityRoute[$route])) {
-
-            $handler = $this->securityRoute[$route];
-            $handlerObject = new $handler[0]($this, $request, $response);
-            return call_user_func([$handlerObject, $handler[1]]);
-        }
-        return true;
-    }
-
     public function getRoutes()
     {
         return $this->route->getRoutes();
@@ -236,7 +208,7 @@ class App
      */
     public function addPool($name, PoolInterface $driver)
     {
-        if (!$this->server->poolManager) {
+        if (!isset($this->server->poolManager)) {
             $this->server->poolManager = new PoolManager();
         }
 

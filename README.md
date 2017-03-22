@@ -41,7 +41,7 @@ $app->addListener(['0.0.0.0', 9502, SWOOLE_TCP]);
 
 ### 路由
 
-基于nikic/fast-route，输出方式可以直接`return`，如果是数组会自动`json_encode`，也可以使用`response->send`，当使用`return`的时候，接口就是一个公共方法，可以很方便其他api调用
+基于nikic/fast-route进行扩展，比如安全验证，api缓存等
 
 ```php
 $app->loadRoute(
@@ -60,7 +60,7 @@ $app->loadRoute(
 );
 ```
 
-路由回调，可以不需要继承任何class，get参数和post数据，通过方法参数传递
+输出方式可以直接`return`，如果是数组会自动`json_encode`，也可以使用`response->send`，可以不需要继承任何class，get参数和post数据，通过方法参数传递
 
 ```php
 class User
@@ -110,7 +110,23 @@ class Feed extends BijouApi
 }
 ```
 
-接口之间调用
+#### api安全
+
+路由扩展了`security` 字段，用于设定安全验证，比如auth或sign，回调函数必须返回true，否则会抛出403
+
+```php
+$app->loadRoute(
+    [
+        
+        ['POST', '/feed', ['\Bijou\Example\Feed', 'create'], 'security' => ['\Bijou\Example\Feed', 'check']],
+       
+    ]
+);
+```
+
+#### api 间调用
+
+由于接口都是直接reurn一个数组，所以每个接口又能当做是一个公共方法，接口之间调用非常简单
 
 ```php
 class User
@@ -142,22 +158,6 @@ class Feed extends BijouApi
         // 调用user api的方法
         return $this->invokeApi(['\Bijou\Example\User', 'getInfo'], [$id]);
     }
-}
-```
-
-### api安全
-可以在执行路由回调之前，注册一个handler，来做验证，比如auth或sign，回调函数必须返回true，否则会抛出403
-
-```php
-$app->setSecurityRoute([
-    '/feed' => ['\Bijou\Example\Feed', 'check']
-]);
-
-...
-
-public function check()
-{
-    return true;
 }
 ```
 

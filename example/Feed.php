@@ -78,7 +78,7 @@ class Feed extends BijouApi
      */
     public function check()
     {
-        return true;
+        return false;
     }
 
 }
