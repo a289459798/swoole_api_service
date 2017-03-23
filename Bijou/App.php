@@ -10,14 +10,12 @@
 namespace Bijou;
 
 use Bijou\Core\PoolManager;
-use Bijou\Core\Service;
 use Bijou\Core\ServiceManager;
 use Bijou\Core\TaskManager;
 use Bijou\Decorator\Decorator;
 use Bijou\Decorator\ExceptionDecorator;
 use Bijou\Decorator\ResponseDecorator;
 use Bijou\Decorator\RunTimeDecorator;
-use Bijou\Decorator\TimeDecorator;
 use Bijou\Exception\MethodNotAllowException;
 use Bijou\Exception\NoFoundException;
 use Bijou\Exception\PHPException;
@@ -25,7 +23,6 @@ use Bijou\Http\Frame;
 use Bijou\Http\Request;
 use Bijou\Http\Response;
 use Bijou\Interfaces\AsyncTaskInterface;
-use Bijou\Interfaces\DriverInterface;
 use Bijou\Interfaces\PoolInterface;
 use Bijou\Interfaces\ServiceInterface;
 use Swoole\Http;
