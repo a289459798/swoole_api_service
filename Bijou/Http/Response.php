@@ -36,15 +36,7 @@ class Response
             }
             $this->response->end($data);
         }
-    }
 
-    /**
-     * 结束http响应，发送文本数据
-     * @param $data
-     */
-    public function sendText($data)
-    {
-        $this->response->end($data);
     }
 
     /**

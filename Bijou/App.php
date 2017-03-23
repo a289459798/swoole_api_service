@@ -9,6 +9,7 @@
 
 namespace Bijou;
 
+use Bijou\Core\CacheManager;
 use Bijou\Core\PoolManager;
 use Bijou\Core\ServiceManager;
 use Bijou\Core\TaskManager;
@@ -38,6 +39,7 @@ class App
     private $taskManager;
     private $serviceManager;
     private $process;
+    private $cacheManger;
 
     /**
      * 设置监听的ip与端口
@@ -127,6 +129,16 @@ class App
     public function getRoutes()
     {
         return $this->route->getRoutes();
+    }
+
+    public function setCache($cacheDir, $expire = 3600, $mode = BIJOU_CACHE_FILE)
+    {
+        $this->cacheManger = new CacheManager($cacheDir, $expire, $mode);
+    }
+
+    public function getCacheManager()
+    {
+        return $this->cacheManger;
     }
 
     /**
@@ -233,7 +245,7 @@ class App
      * @param Request $request
      * @param $data
      */
-    public function requestEnd(Request $request, $data = [])
+    public function requestEnd(Request $request, $data = null)
     {
 
         if (isset($this->runTimeDecorator)) {
