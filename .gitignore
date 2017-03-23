@@ -4,3 +4,5 @@ vendor
 Dockerfile
 docker-compose.yaml
 /nbproject/
+conf.d
+cache

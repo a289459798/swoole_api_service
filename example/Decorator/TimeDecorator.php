@@ -41,9 +41,6 @@ class TimeDecorator extends RunTimeDecorator
         $this->requests[$request->getClient()] = $this->getCurrentTime();
 
         return true;
-//        return [
-//            '验证错误'
-//        ];
     }
 
     /**
@@ -52,11 +49,12 @@ class TimeDecorator extends RunTimeDecorator
      * @param $data
      * @return mixed
      */
-    public function requestEnd(Request $request, $data = [])
+    public function requestEnd(Request $request, $data = null)
     {
         $endTime = $this->getCurrentTime();
         $this->setRunTime($request, round($endTime - $this->requests[$request->getClient()], 4));
         unset($this->requests[$request->getClient()]);
+
     }
 
     /**

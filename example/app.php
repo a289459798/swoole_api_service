@@ -35,7 +35,7 @@ $app->loadRoute(
             ['POST', '/', ['\Bijou\Example\User', 'create']],
         ],
 
-        ['GET', '/feed/{id:[0-9]+}', ['\Bijou\Example\Feed', 'getInfo']],
+        ['GET', '/feed/{id:[0-9]+}', ['\Bijou\Example\Feed', 'getInfo'], 'cache' => true],
         ['GET', '/feed', ['\Bijou\Example\Feed', 'create'], 'security' => ['\Bijou\Example\Feed', 'check']],
         ['GET', '/feed/email', ['\Bijou\Example\Feed', 'postEmail']],
         ['GET', '/feed/service', ['\Bijou\Example\Feed', 'service']],
@@ -44,6 +44,8 @@ $app->loadRoute(
         ['GET', '/pool/mysql', ['\Bijou\Example\Pool', 'mysql']],
     ]
 );
+
+$app->setCache(__DIR__ . '/cache', 3600, BIJOU_CACHE_FILE);
 
 $app->setWebSocket('\Bijou\Example\Chat');
 

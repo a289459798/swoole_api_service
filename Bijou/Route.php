@@ -23,12 +23,14 @@ class Route
 
     private $dispatcher;
     private $securityRouters;
+    private $cacheRouters;
     private $routes;
 
     public function __construct()
     {
         $this->routes = [];
         $this->securityRouters = [];
+        $this->cacheRouters = [];
     }
 
     /**
@@ -65,10 +67,18 @@ class Route
 
     }
 
+    /**
+     * @param $route
+     */
     private function parseRoute($route)
     {
+        $callback = join("_", $route[2]);
         if (isset($route['security'])) {
-            $this->securityRouters[join("_", $route[2])] = $route['security'];
+            $this->securityRouters[$callback] = $route['security'];
+        }
+
+        if ($route[0] == 'GET' && isset($route['cache'])) {
+            $this->cacheRouters[$callback] = $route['cache'];
         }
     }
 
@@ -78,7 +88,7 @@ class Route
      */
     public function getSecurityRouter(callable $callback)
     {
-        if (count($this->securityRouters) > 0 && isset($this->securityRouters[join("_", $callback)])) {
+        if (isset($this->securityRouters[join("_", $callback)])) {
             return $this->securityRouters[join("_", $callback)];
         }
         return false;
@@ -110,6 +120,40 @@ class Route
         return $this->routes;
     }
 
+    /**
+     * 检查是否缓存
+     * @param $callback
+     * @param App $app
+     * @param Request $request
+     * @return bool
+     */
+    public function checkCache($callback, App $app, Request $request)
+    {
+        $cacheManager = $app->getCacheManager();
+        if ($cacheManager && isset($this->cacheRouters[join("_", $callback)]) && $request->getMethod() == 'GET') {
+
+            $expire = $this->cacheRouters[join("_", $callback)];
+            if ($cacheManager) {
+                return $cacheManager->readCache($request->getApi(), $expire);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 写缓存
+     * @param $callback
+     * @param App $app
+     * @param Request $request
+     * @param $data
+     */
+    public function writeCache($callback, App $app, Request $request, $data)
+    {
+        $cacheManager = $app->getCacheManager();
+        if ($cacheManager && isset($this->cacheRouters[join("_", $callback)]) && $request->getMethod() == 'GET') {
+            $cacheManager->writeCache($request->getApi(), $data);
+        }
+    }
 
     /**
      * @param Request $request
@@ -127,6 +171,7 @@ class Route
         if (true !== $requestStart) {
 
             $response->send($requestStart);
+            $app->requestEnd($request);
             return;
         }
         $method = $request->getMethod();
@@ -153,6 +198,12 @@ class Route
                     break;
                 }
 
+                if ($cache = $this->checkCache($handler, $app, $request)) {
+                    $response->send($cache);
+                    $app->requestEnd($request);
+                    break;
+                }
+
                 // ... call $handler with $vars
                 if (!is_callable($handler)) {
                     throw new PHPException($request, $response);
@@ -165,6 +216,7 @@ class Route
 
                 $responseData = call_user_func_array([$handlerObject, $handler[1]], $vars);
                 $response->send($responseData);
+                $this->writeCache($handler, $app, $request, $responseData);
                 $app->requestEnd($request, $responseData);
                 break;
         }

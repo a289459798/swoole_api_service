@@ -122,7 +122,42 @@ $app->loadRoute(
        
     ]
 );
+
 ```
+#### api缓存
+
+api缓存只能用于`get`请求，通过开启缓存来降低服务器压力，目前只支持文件缓存（后续增加内存缓存），缓存数据加密是通过serialize，所以请在`php.ini`中开启`swoole_serialize`(不开启将使用php原生的serialize)
+
+```ini
+swoole.fast_serialize=On
+```
+
+需要先开启缓存，并设置缓存的目录、缓存时间、以及缓存模式（暂时只支持文件）
+
+```php
+$app->setCache(__DIR__ . '/cache', 3600, BIJOU_CACHE_FILE);
+```
+
+路由通过扩展 `cache` 字段来指定需要缓存
+
+```php
+$app->loadRoute(
+    [
+       
+        ['GET', '/feed/{id:[0-9]+}', ['\Bijou\Example\Feed', 'getInfo'], 'cache' => true],
+    ]
+);
+```
+
+可以单独设置某个路由的缓存时间，`cache` 字段不为 `true`的情况，就认为是缓存时间
+
+```php
+$app->loadRoute(
+    [
+       
+        ['GET', '/feed/{id:[0-9]+}', ['\Bijou\Example\Feed', 'getInfo'], 'cache' => 3600],
+    ]
+);
 
 #### api 间调用
 
