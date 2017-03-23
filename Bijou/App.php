@@ -14,7 +14,6 @@ use Bijou\Core\ServiceManager;
 use Bijou\Core\TaskManager;
 use Bijou\Decorator\Decorator;
 use Bijou\Decorator\ExceptionDecorator;
-use Bijou\Decorator\ResponseDecorator;
 use Bijou\Decorator\RunTimeDecorator;
 use Bijou\Exception\MethodNotAllowException;
 use Bijou\Exception\NoFoundException;
@@ -36,7 +35,6 @@ class App
     private $route;
     private $runTimeDecorator;
     private $exceptionDecorator;
-    private $responseDecorator;
     private $taskManager;
     private $serviceManager;
     private $process;
@@ -142,8 +140,6 @@ class App
             $this->runTimeDecorator = $decorator;
         } else if ($decorator instanceof ExceptionDecorator) {
             $this->exceptionDecorator = $decorator;
-        } else if ($decorator instanceof ResponseDecorator) {
-            $this->responseDecorator = $decorator;
         }
     }
 
@@ -151,7 +147,7 @@ class App
     {
 
         $bijouRequest = new Request($request);
-        $bijouResponse = new Response($response, $this->responseDecorator);
+        $bijouResponse = new Response($response, $this->runTimeDecorator);
         try {
             $this->route->dispatch($bijouRequest, $bijouResponse, $this);
         } catch (\Exception $e) {
@@ -228,21 +224,20 @@ class App
     public function requestStart(Request $request)
     {
         if (isset($this->runTimeDecorator)) {
-            $this->runTimeDecorator->setRequest($request);
-            return $this->runTimeDecorator->requestStart();
+            return $this->runTimeDecorator->requestStart($request);
         }
         return true;
     }
 
     /**
      * @param Request $request
+     * @param $data
      */
-    public function requestEnd(Request $request)
+    public function requestEnd(Request $request, $data = [])
     {
 
         if (isset($this->runTimeDecorator)) {
-            $this->runTimeDecorator->setRequest($request);
-            $this->runTimeDecorator->requestEnd();
+            $this->runTimeDecorator->requestEnd($request, $data);
         }
     }
 
@@ -256,8 +251,7 @@ class App
     {
         $this->requestEnd($request);
         if (isset($this->exceptionDecorator)) {
-            $this->exceptionDecorator->setRequest($request);
-            $response->send($this->exceptionDecorator->throwException($throwable));
+            $response->send($this->exceptionDecorator->throwException($request, $throwable));
             return true;
         }
 

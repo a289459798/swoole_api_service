@@ -201,7 +201,13 @@ class Chat
 
 #### api请求
 
-注册该钩子后，api请求过来和response完成之后都会会回调， 可以通过 `requestStart`来终止本次请求，只有返回`true`的时候，请求才会继续，也可以很方便统计一次完整的请求所需要记录的东西，需要继承 `RunTimeDecorator`
+注册该钩子后，api请求过来和response完成之后都会会回调，需要继承 `RunTimeDecorator`
+
+`requestStart`: 每次请求都会先回调该方法，可以用来终止本次请求，只有返回`true`的时候，请求才会继续，否则会终止并输出返回的数据，可以做安全验证或是缓存读取
+
+`requestEnd`： 请求完成之后回调之后回调，可以自行做缓存处理以及结合`requestStart`统计一次完整的请求的运行时间等
+
+`responseFormat`：可以用来统一所有api返回数据的规范，与业务逻辑分离
 
 ```php
 $app->addDecorator(new \Bijou\Example\Decorator\TimeDecorator());
@@ -212,15 +218,25 @@ abstract class RunTimeDecorator extends Decorator
 {
     /**
      * 请求开始之前回调，可验证请求的安全性，返回true 正常请求，否则 请求终止，并输出返回内容
+     * @param Request $request
      * @return bool
      */
-    abstract public function requestStart();
+    abstract public function requestStart(Request $request);
 
     /**
      * 请求完成之后回调之后回调
+     * @param Request $request
+     * @param $data
      * @return mixed
      */
-    abstract public function requestEnd();
+    abstract public function requestEnd(Request $request, $data);
+
+    /**
+     * 自定义response 的数据格式
+     * @param $data
+     * @return mixed
+     */
+    abstract public function responseFormat($data);
 }
 
 class TimeDecorator extends RunTimeDecorator
@@ -232,9 +248,9 @@ class TimeDecorator extends RunTimeDecorator
         $this->requests = [];
     }
 
-    private function setRunTime($time)
+    private function setRunTime($request, $time)
     {
-        var_dump("api:" . $this->getRequest()->getApi() . "   运行时间:" . $time);
+        var_dump("api:" . $request->getApi() . "   运行时间:" . $time);
     }
 
     private function getCurrentTime()
@@ -245,11 +261,12 @@ class TimeDecorator extends RunTimeDecorator
 
     /**
      * 请求开始之前回调，可验证请求的安全性，返回true 正常请求，否则 请求终止，并输出返回内容
+     * @param Request $request
      * @return bool
      */
-    public function requestStart()
+    public function requestStart(Request $request)
     {
-        $this->requests[$this->getRequest()->getClient()] = $this->getCurrentTime();
+        $this->requests[$request->getClient()] = $this->getCurrentTime();
 
         return true;
 //        return [
@@ -259,40 +276,27 @@ class TimeDecorator extends RunTimeDecorator
 
     /**
      * 请求完成之后回调之后回调
+     * @param Request $request
+     * @param $data
      * @return mixed
      */
-    public function requestEnd()
+    public function requestEnd(Request $request, $data = [])
     {
         $endTime = $this->getCurrentTime();
-        $this->setRunTime(round($endTime - $this->requests[$this->getRequest()->getClient()], 4));
-        unset($this->requests[$this->getRequest()->getClient()]);
+        $this->setRunTime($request, round($endTime - $this->requests[$request->getClient()], 4));
+        unset($this->requests[$request->getClient()]);
     }
-}
-```
-
-### 自定义response格式
-
-可以通过注册 `ResponseDecorator` 来统一所有api返回数据的规范，与业务逻辑分离
-
-需要先静态注册
-```php
-$app->addDecorator(new \Bijou\Example\Decorator\ResponseDecorator());
-```
-
-```php
-class ResponseDecorator extends \Bijou\Decorator\ResponseDecorator
-{
 
     /**
      * 自定义response 的数据格式
      * @param $data
      * @return mixed
      */
-    public function format($data)
+    public function responseFormat($data)
     {
         return json_encode([
             'code' => isset($data['code']) ? $data['code'] : 200,
-            'message' => isset($data['message']) ? $data['message'] : '',
+            'message' => isset($data['message']) ? $data['message'] : 200,
             'data' => $data
         ]);
     }

@@ -9,22 +9,7 @@
 namespace Bijou\Decorator;
 
 
-use Bijou\Http\Request;
-
 abstract class Decorator
 {
-    private $request;
 
-    public function setRequest(Request $request)
-    {
-        $this->request = $request;
-    }
-
-    /**
-     * @return Request
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
 }

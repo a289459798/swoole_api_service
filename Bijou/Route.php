@@ -123,7 +123,6 @@ class Route
     public function dispatch(Request $request, Response $response, App $app)
     {
 
-
         $requestStart = $app->requestStart($request);
         if (true !== $requestStart) {
 
@@ -164,11 +163,12 @@ class Route
                     $vars = [$request->getBody(), $request->post];
                 }
 
-                $response->send(call_user_func_array([$handlerObject, $handler[1]], $vars));
+                $responseData = call_user_func_array([$handlerObject, $handler[1]], $vars);
+                $response->send($responseData);
+                $app->requestEnd($request, $responseData);
                 break;
         }
 
-        $app->requestEnd($request);
     }
 
 }

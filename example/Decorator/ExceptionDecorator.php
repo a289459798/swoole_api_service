@@ -9,14 +9,17 @@
 namespace Bijou\Example\Decorator;
 
 
+use Bijou\Http\Request;
+
 class ExceptionDecorator extends \Bijou\Decorator\ExceptionDecorator
 {
 
     /**
+     * @param Request $request
      * @param \Throwable $throwable
      * @return Array
      */
-    public function throwException(\Throwable $throwable)
+    public function throwException(Request $request, \Throwable $throwable)
     {
         return [
             'code' => '自定义提示代码/默认代码:' . $throwable->getCode(),
