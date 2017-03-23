@@ -158,6 +158,7 @@ $app->loadRoute(
         ['GET', '/feed/{id:[0-9]+}', ['\Bijou\Example\Feed', 'getInfo'], 'cache' => 3600],
     ]
 );
+```
 
 #### api 间调用
 
