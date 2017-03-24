@@ -109,9 +109,14 @@ class Client
         if ($ip) {
             if ($ip != $this->ip || !$this->client || !$this->client->isConnected()) {
                 $this->ip = $ip;
-                $this->client = new \Swoole\Http\Client($ip, $this->url['port'] ? $this->url['port'] : 80);
+                $ssl = $this->url['scheme'] == 'https' ? true : false;
+                $port = $this->url['port'] ? $this->url['port'] : ($ssl ? 443 : 80);
+                $this->client = new \Swoole\Http\Client($ip, $port, $ssl);
             }
 
+            $this->headers += [
+                'Host' => $host
+            ];
             $this->client->setHeaders($this->headers);
             $this->client->setMethod($this->method);
             $this->client->setCookies($this->cookies);

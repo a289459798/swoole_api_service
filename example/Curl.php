@@ -24,7 +24,7 @@ class Curl extends BijouApi
 
         $client = new Client();
         $response = $this->getResponse();
-        $client->get("http://www.baidu.com/", function ($data) use($response) {
+        $client->get("http://book.km.com/", function ($data) use($response) {
 
             $response->sendText($data);
         });
