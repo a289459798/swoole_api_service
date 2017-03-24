@@ -36,12 +36,14 @@ $app->loadRoute(
         ],
 
         ['GET', '/feed/{id:[0-9]+}', ['\Bijou\Example\Feed', 'getInfo'], 'cache' => true],
-        ['GET', '/feed', ['\Bijou\Example\Feed', 'create'], 'security' => ['\Bijou\Example\Feed', 'check']],
+        ['POST', '/feed', ['\Bijou\Example\Feed', 'create'], 'security' => ['\Bijou\Example\Feed', 'check']],
         ['GET', '/feed/email', ['\Bijou\Example\Feed', 'postEmail']],
         ['GET', '/feed/service', ['\Bijou\Example\Feed', 'service']],
         ['GET', '/feed/user/{id:[0-9]+}', ['\Bijou\Example\Feed', 'getUser']],
         ['GET', '/export', ['\Bijou\Example\Export', 'getApi']],
         ['GET', '/pool/mysql', ['\Bijou\Example\Pool', 'mysql']],
+        ['GET', '/curl/get', ['\Bijou\Example\Curl', 'get']],
+        ['GET', '/curl/post', ['\Bijou\Example\Curl', 'post']],
     ]
 );
 

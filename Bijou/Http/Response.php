@@ -29,14 +29,22 @@ class Response
     public function send($data)
     {
         if ($this->runTimeDecorator) {
-            $this->response->end($this->runTimeDecorator->responseFormat($data));
+            $data = $this->runTimeDecorator->responseFormat($data);
         } else {
             if (is_array($data)) {
                 $data = json_encode($data);
             }
-            $this->response->end($data);
         }
+        $this->sendData($data);
+    }
 
+    public function sendText($data) {
+        $this->sendData($data);
+    }
+
+    private function sendData($data) {
+
+        $this->response->end($data);
     }
 
     /**

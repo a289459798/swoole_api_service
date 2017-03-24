@@ -66,7 +66,7 @@ class TimeDecorator extends RunTimeDecorator
     {
         return json_encode([
             'code' => isset($data['code']) ? $data['code'] : 200,
-            'message' => isset($data['message']) ? $data['message'] : 200,
+            'message' => isset($data['message']) ? $data['message'] : '',
             'data' => $data
         ]);
     }
