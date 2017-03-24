@@ -126,11 +126,14 @@ $app->loadRoute(
 ```
 #### api缓存
 
-api缓存只能用于`get`请求，通过开启缓存来降低服务器压力，目前只支持文件缓存（后续增加内存缓存），缓存数据加密是通过serialize，所以请在`php.ini`中开启`swoole_serialize`(不开启将使用php原生的serialize)
+api缓存只能用于`get`请求，通过开启缓存来降低服务器压力，目前只支持文件缓存（后续增加内存缓存），缓存数据加密是通过serialize，所以请在`php.ini`中开启`swoole_serialize`
+
+2.0.7版本swoole支持
 
 ```ini
 swoole.fast_serialize=On
 ```
+也可以独立安装扩展`swoole_serialize`，https://github.com/swoole/swoole_serialize， 否则将使用php原生的serialize
 
 需要先开启缓存，并设置缓存的目录、缓存时间、以及缓存模式（暂时只支持文件）
 
