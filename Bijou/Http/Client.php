@@ -100,7 +100,7 @@ class Client
     {
         $this->url = parse_url($url);
         $this->callback = $callback;
-        swoole_async_dns_lookup($this->url['host'], [$this, 'execute']);
+        \Swoole\Async::dnsLookup($this->url['host'], [$this, 'execute']);
     }
 
     public function execute($host, $ip)
