@@ -51,9 +51,11 @@ class TimeDecorator extends RunTimeDecorator
      */
     public function requestEnd(Request $request, $data = null)
     {
-        $endTime = $this->getCurrentTime();
-        $this->setRunTime($request, round($endTime - $this->requests[$request->getClient()], 4));
-        unset($this->requests[$request->getClient()]);
+        if (isset($this->requests[$request->getClient()])) {
+            $endTime = $this->getCurrentTime();
+            $this->setRunTime($request, round($endTime - $this->requests[$request->getClient()], 4));
+            unset($this->requests[$request->getClient()]);
+        }
 
     }
 

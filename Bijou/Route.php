@@ -167,16 +167,8 @@ class Route
     public function dispatch(Request $request, Response $response, App $app)
     {
 
-        $requestStart = $app->requestStart($request);
-        if (true !== $requestStart) {
-
-            $response->send($requestStart);
-            $app->requestEnd($request);
-            return;
-        }
         $method = $request->getMethod();
         $pathInfo = $request->getApi();
-
         $routeInfo = $this->dispatcher->dispatch($method, $pathInfo);
 
         switch ($routeInfo[0]) {
@@ -189,6 +181,14 @@ class Route
                 throw new MethodNotAllowException($request, $response);
                 break;
             case Dispatcher::FOUND:
+
+                $requestStart = $app->requestStart($request);
+                if (true !== $requestStart) {
+
+                    $response->send($requestStart);
+                    $app->requestEnd($request);
+                    return;
+                }
 
                 $handler = $routeInfo[1];
                 $vars = $routeInfo[2];
