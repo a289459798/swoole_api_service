@@ -8,6 +8,10 @@
 
 namespace Bijou\Http;
 
+/**
+ * Class Header
+ * @package Bijou\Http
+ */
 class Header
 {
     private $header;

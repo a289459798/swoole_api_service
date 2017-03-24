@@ -487,11 +487,11 @@ public function getUser($id)
     return $this->invokeApi(['\Bijou\Example\User', 'getInfo'], [$id]);
 }
 ```
-对于不想导出的api，加 `@Ignore` 注解
+对于不想导出的api，加 `@ignore` 注解
 
 ```php
 /**
- * @Ignore
+ * @ignore
  * @return bool
  */
 public function check()

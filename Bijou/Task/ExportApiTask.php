@@ -42,7 +42,7 @@ class ExportApiTask implements AsyncTaskInterface
                 $api = $this->format($route);
             }
 
-            if (isset($api['Ignore'])) {
+            if (isset($api['ignore'])) {
                 continue;
             }
             $apis[] = $api;

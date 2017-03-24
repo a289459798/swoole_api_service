@@ -10,6 +10,18 @@ namespace Bijou\Http;
 
 use Swoole\Http;
 
+/**
+ * Class Request
+ * @package Bijou\Http
+ *
+ * @property $get
+ * @property $post
+ * @property $header
+ * @property $server
+ * @property $cookie
+ * @property $files
+ * @property $fd
+ */
 class Request
 {
     private $request;
