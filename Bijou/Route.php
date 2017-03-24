@@ -215,7 +215,7 @@ class Route
                 }
 
                 $responseData = call_user_func_array([$handlerObject, $handler[1]], $vars);
-                $response->send($responseData);
+                $responseData && $response->send($responseData);
                 $this->writeCache($handler, $app, $request, $responseData);
                 $app->requestEnd($request, $responseData);
                 break;
