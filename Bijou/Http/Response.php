@@ -11,6 +11,17 @@ namespace Bijou\Http;
 use Bijou\Decorator\RunTimeDecorator;
 use Swoole\Http;
 
+/**
+ * Class Response
+ * @package Bijou\Http
+ *
+ * @method end($html = '')
+ * @method write($html)
+ * @method header($key, $value)
+ * @method cookie($key, $value, $expire = 0, $path = '/', $domain = '', $secure = false, $httponly = false)
+ * @method status($code)
+ * @method gzip($level = 1)
+ */
 class Response
 {
     private $response;

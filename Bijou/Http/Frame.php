@@ -10,6 +10,15 @@ namespace Bijou\Http;
 
 use Swoole\WebSocket;
 
+/**
+ * Class Frame
+ * @package Bijou\Http
+ *
+ * @property int $fd
+ * @property bool $finish
+ * @property string $opcode
+ * @property string $data
+ */
 class Frame
 {
     private $frame;

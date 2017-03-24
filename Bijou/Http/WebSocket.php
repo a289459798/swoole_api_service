@@ -11,6 +11,13 @@ namespace Bijou\Http;
 const WEBSOCKET_TEXT = WEBSOCKET_OPCODE_TEXT;
 const WEBSOCKET_BINARY = WEBSOCKET_OPCODE_BINARY;
 
+/**
+ * Class WebSocket
+ * @package Bijou\Http
+ *
+ * @method push($fd, $data, $binary_data = WEBSOCKET_OPCODE_TEXT, $finish = true)
+ * @method pack($data, $opcode = WEBSOCKET_OPCODE_TEXT, $finish = true, $mask = false)
+ */
 class WebSocket
 {
 

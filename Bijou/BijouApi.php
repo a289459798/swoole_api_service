@@ -11,8 +11,8 @@ namespace Bijou;
 use Bijou\Interfaces\AsyncTaskInterface;
 use Bijou\Interfaces\ExportApiInterface;
 use Bijou\Task\ExportApiTask;
-use Swoole\Http\Request;
-use Swoole\Http\Response;
+use Bijou\Http\Request;
+use Bijou\Http\Response;
 
 abstract class BijouApi
 {
