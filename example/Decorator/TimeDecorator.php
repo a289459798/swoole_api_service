@@ -13,12 +13,6 @@ use Bijou\Http\Request;
 
 class TimeDecorator extends RunTimeDecorator
 {
-    private $requests;
-
-    public function __construct()
-    {
-        $this->requests = [];
-    }
 
     private function setRunTime($request, $time)
     {
@@ -38,7 +32,6 @@ class TimeDecorator extends RunTimeDecorator
      */
     public function requestStart(Request $request)
     {
-        $this->requests[$request->getClient()] = $this->getCurrentTime();
 
         return true;
     }
@@ -51,12 +44,8 @@ class TimeDecorator extends RunTimeDecorator
      */
     public function requestEnd(Request $request, $data = null)
     {
-        if (isset($this->requests[$request->getClient()])) {
-            $endTime = $this->getCurrentTime();
-            $this->setRunTime($request, round($endTime - $this->requests[$request->getClient()], 4));
-            unset($this->requests[$request->getClient()]);
-        }
-
+        $endTime = $this->getCurrentTime();
+        $this->setRunTime($request, round($endTime - $request->server['request_time_float'], 4));
     }
 
     /**
