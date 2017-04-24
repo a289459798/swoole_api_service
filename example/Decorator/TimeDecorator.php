@@ -63,6 +63,6 @@ class TimeDecorator extends RunTimeDecorator
             'code' => $code,
             'message' => $message,
             'data' => $data
-        ]);
+        ], JSON_UNESCAPED_UNICODE);
     }
 }

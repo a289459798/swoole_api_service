@@ -122,7 +122,7 @@ class Client
             $this->client->setCookies($this->cookies);
             $this->data && $this->client->setData($this->data);
             $callback = $this->callback;
-            $this->client->execute($this->url['path'] . $this->url['query'], function ($response) use ($callback) {
+            $this->client->execute($this->url['path'] . (isset($this->url['query']) ? $this->url['query'] : ""), function ($response) use ($callback) {
                 call_user_func($callback, $response->body);
             });
 
