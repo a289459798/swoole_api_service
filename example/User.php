@@ -32,8 +32,8 @@ class User extends Controller
      */
     public function createUser($data)
     {
-        return [
-            $data,
-        ];
+//        return [
+            $this->getRequest()->file('ddd')->max(200)->type('jpg')->move("/a/b", "aaa.jpg");
+//        ];
     }
 }

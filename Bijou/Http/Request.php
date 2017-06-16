@@ -8,6 +8,9 @@
 
 namespace Bijou\Http;
 
+use Bijou\Manager\File\FileManager;
+use Bijou\Manager\File\MultiFileManager;
+use Bijou\Manager\File\SingleFileManager;
 use Swoole\Http;
 
 /**
@@ -109,11 +112,6 @@ class Request
         return json_decode($this->getBody(), true);
     }
 
-    public function getBody()
-    {
-        return $this->request->rawContent();
-    }
-
     /**
      * @return Header
      */
@@ -148,6 +146,65 @@ class Request
     public function getPort()
     {
         return $this->request->server['server_port'];
+    }
+
+    public function getBody()
+    {
+        return $this->request->rawContent();
+    }
+
+    /**
+     * @param $param
+     * @return mixed
+     */
+    public function get($param)
+    {
+        return $this->request->get[$param];
+    }
+
+    /**
+     * @param $param
+     * @return mixed
+     */
+    public function post($param)
+    {
+        $data = [];
+        if ($this->isForm()) {
+
+            $data = $this->request->post;
+        } else {
+            $data = json_decode($this->getBody(), true);
+        }
+        return $data[$param];
+    }
+
+    /**
+     * 判断是否为文件
+     * @param $param
+     * @return bool
+     */
+    public function isFile($param)
+    {
+        return isset($this->request->files[$param]);
+    }
+
+    /**
+     * @param $param
+     * @return FileManager
+     */
+    public function file($param)
+    {
+        $file = $this->request->files[$param];
+        return new SingleFileManager($file);
+    }
+
+    /**
+     * @return FileManager
+     */
+    public function files()
+    {
+        $files = $this->request->files;
+        return new MultiFileManager($files);
     }
 
     public function __get($name)

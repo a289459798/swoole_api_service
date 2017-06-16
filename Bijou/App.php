@@ -265,6 +265,7 @@ class App
     {
         $this->requestEnd($request);
         if (isset($this->exceptionDecorator)) {
+            $response->status($throwable->getCode());
             $response->send($this->exceptionDecorator->throwException($request, $throwable));
             return true;
         }
