@@ -9,10 +9,10 @@
 namespace Bijou\Example;
 
 
-use Bijou\BijouApi;
+use Bijou\Controller;
 use Bijou\Example\AsyncTask\ExportApi;
 
-class Export extends BijouApi
+class Export extends Controller
 {
 
     /**
@@ -21,7 +21,8 @@ class Export extends BijouApi
      */
     public function getApi()
     {
-        $this->exportApi(new ExportApi());
+
+        $this->addAsyncTask(new ExportApiTask(new ExportApi(), $this->getApp()->getRoutes()));
         return "接口正在导出，请查看文件";
     }
 

@@ -9,10 +9,10 @@
 namespace Bijou\Example;
 
 
-use Bijou\BijouApi;
+use Bijou\Controller;
 use Bijou\Example\AsyncTask\EmailTask;
 
-class Pool extends BijouApi
+class Pool extends Controller
 {
 
     public function mysql()

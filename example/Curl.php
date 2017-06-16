@@ -9,10 +9,10 @@
 namespace Bijou\Example;
 
 
-use Bijou\BijouApi;
+use Bijou\Controller;
 use Bijou\Http\Client;
 
-class Curl extends BijouApi
+class Curl extends Controller
 {
 
     /**

@@ -14,7 +14,7 @@ use Bijou\Task\ExportApiTask;
 use Bijou\Http\Request;
 use Bijou\Http\Response;
 
-abstract class BijouApi
+abstract class Controller
 {
 
     private $app;
@@ -22,7 +22,7 @@ abstract class BijouApi
     private $response;
 
     /**
-     * BijouApi constructor.
+     * Controller constructor.
      * @param App $app
      * @param Request $request
      * @param Response $response
@@ -32,6 +32,11 @@ abstract class BijouApi
         $this->app = $app;
         $this->request = $request;
         $this->response = $response;
+    }
+
+    public function getApp()
+    {
+        return $this->app;
     }
 
     /**
@@ -56,17 +61,11 @@ abstract class BijouApi
      * @param array $vars
      * @return mixed
      */
-    public function invokeApi(Array $callback, Array $vars)
+    public function dispatch(Array $callback, Array $vars)
     {
 
         $handle = new $callback[0]($this->app, $this->request, $this->response);
         return call_user_func_array([$handle, $callback[1]], $vars);
-    }
-
-
-    public function exportApi(ExportApiInterface $exportApi)
-    {
-        $this->addAsyncTask(new ExportApiTask($exportApi, $this->app->getRoutes()));
     }
 
     public function pool($name)

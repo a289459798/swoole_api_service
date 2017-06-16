@@ -6,7 +6,7 @@
  * Time: 22:39
  */
 
-namespace Bijou\Core;
+namespace Bijou\Manager;
 
 use Bijou\Interfaces\PoolInterface;
 

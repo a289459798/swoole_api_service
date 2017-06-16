@@ -6,7 +6,7 @@
  * Time: 18:07
  */
 
-namespace Bijou\Core;
+namespace Bijou\Manager;
 
 
 use Bijou\Interfaces\ServiceInterface;

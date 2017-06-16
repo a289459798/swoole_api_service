@@ -6,7 +6,7 @@
  * Time: 16:17
  */
 
-namespace Bijou\Core;
+namespace Bijou\Manager;
 
 
 use Bijou\Interfaces\AsyncTaskInterface;

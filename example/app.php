@@ -21,7 +21,7 @@ $app->loadConfig(
             'max_request' => 500,
             'dispatch_mode' => 1,
             'task_worker_num' => 8
-        ]
+        ],
     ]
 );
 
@@ -31,8 +31,10 @@ $app->addListener(['0.0.0.0', 9502, SWOOLE_TCP]);
 $app->loadRoute(
     [
         '/user' => [
-            ['GET', '/{id:[0-9]+}', ['\Bijou\Example\User', 'getInfo']],
-            ['POST', '/', ['\Bijou\Example\User', 'create']],
+            ['POST', '/', ['\Bijou\Example\User', 'createUser']],
+            ['GET', '/{id:[0-9]+}', ['\Bijou\Example\User', 'getUser']],
+            ['PUT', '/{id:[0-9]+}', ['\Bijou\Example\User', 'updateUser']],
+            ['DELETE', '/{id:[0-9]+}', ['\Bijou\Example\User', 'deleteUser']],
         ],
 
         ['GET', '/feed/{id:[0-9]+}', ['\Bijou\Example\Feed', 'getInfo'], 'cache' => true],

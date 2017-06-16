@@ -9,10 +9,10 @@
 
 namespace Bijou;
 
-use Bijou\Core\CacheManager;
-use Bijou\Core\PoolManager;
-use Bijou\Core\ServiceManager;
-use Bijou\Core\TaskManager;
+use Bijou\Manager\CacheManager;
+use Bijou\Manager\PoolManager;
+use Bijou\Manager\ServiceManager;
+use Bijou\Manager\TaskManager;
 use Bijou\Decorator\Decorator;
 use Bijou\Decorator\ExceptionDecorator;
 use Bijou\Decorator\RunTimeDecorator;
@@ -40,6 +40,7 @@ class App
     private $serviceManager;
     private $process;
     private $cacheManger;
+    private $config;
 
     /**
      * 设置监听的ip与端口
@@ -71,6 +72,7 @@ class App
      */
     public function loadConfig(Array $config)
     {
+        $this->config = $config;
         if (isset($config['server'])) {
 
             $this->server->set($config['server']);

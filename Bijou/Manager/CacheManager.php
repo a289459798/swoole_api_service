@@ -6,7 +6,7 @@
  * Time: 14:58
  */
 
-namespace Bijou\Core;
+namespace Bijou\Manager;
 
 define("BIJOU_CACHE_FILE", 1);
 

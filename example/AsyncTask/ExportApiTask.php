@@ -6,11 +6,10 @@
  * Time: 14:39
  */
 
-namespace Bijou\Task;
+namespace Bijou\Example\AsyncTask;
 
 
 use Bijou\Interfaces\AsyncTaskInterface;
-use Bijou\Interfaces\ExportApiInterface;
 
 class ExportApiTask implements AsyncTaskInterface
 {
@@ -18,7 +17,7 @@ class ExportApiTask implements AsyncTaskInterface
     private $route;
     private $exportApi;
 
-    public function __construct(ExportApiInterface $exportApi, Array $route)
+    public function __construct(ExportApi $exportApi, Array $route)
     {
         $this->route = $route;
         $this->exportApi = $exportApi;
