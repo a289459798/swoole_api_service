@@ -50,7 +50,67 @@ class Request
         return $this->request->server['request_method'];
     }
 
-    public function getBody() {
+    /**
+     * 是否为post请求
+     * @return bool
+     */
+    public function isPost()
+    {
+        return strtolower($this->getMethod()) == 'post';
+    }
+
+    /**
+     * 是否为get请求
+     * @return bool
+     */
+    public function isGet()
+    {
+        return strtolower($this->getMethod()) == 'get';
+    }
+
+    /**
+     * 判断请求方式
+     * @param $method 请求方式(小写)
+     * @return bool
+     */
+    public function isMethod($method)
+    {
+        return strtolower($this->getMethod()) == $method;
+    }
+
+    /**
+     * 判断是否为表单提交
+     * @return bool
+     */
+    public function isForm()
+    {
+
+        if ($this->getHeader()->getContentType() == 'application/x-www-form-urlencoded') {
+
+            return true;
+        }
+
+        if (false !== strpos($this->getHeader()->getContentType(), "multipart/form-data")) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 获取post请求过来的数据，json会自动decode
+     * @return mixed
+     */
+    public function postData()
+    {
+        if ($this->isForm()) {
+
+            return $this->request->post;
+        }
+        return json_decode($this->getBody(), true);
+    }
+
+    public function getBody()
+    {
         return $this->request->rawContent();
     }
 

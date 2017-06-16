@@ -26,6 +26,11 @@ class Header
         return $this->header['authorization'];
     }
 
+    public function getContentType() {
+
+        return $this->header['content-type'];
+    }
+
     public function __get($name)
     {
         if (isset($this->header[$name])) {

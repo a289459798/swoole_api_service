@@ -55,6 +55,7 @@ class TimeDecorator extends RunTimeDecorator
      */
     public function responseFormat($data)
     {
+//        return $data;
         $code = $data['code'] ? $data['code'] : 200;
         $message = $data['message'] ? $data['message'] : '';
         unset($data['code']);

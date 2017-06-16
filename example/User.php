@@ -27,15 +27,13 @@ class User extends Controller
 
     /**
      * 创建用户
-     * @param $body
-     * @param $formData
+     * @param $data
      * @return string
      */
-    public function create($body, $formData)
+    public function createUser($data)
     {
         return [
-            'body' => $body,
-            'form' => $formData
+            $data,
         ];
     }
 }

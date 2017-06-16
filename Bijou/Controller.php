@@ -9,8 +9,6 @@
 namespace Bijou;
 
 use Bijou\Interfaces\AsyncTaskInterface;
-use Bijou\Interfaces\ExportApiInterface;
-use Bijou\Task\ExportApiTask;
 use Bijou\Http\Request;
 use Bijou\Http\Response;
 
