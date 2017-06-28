@@ -19,12 +19,44 @@ class CoClient
     private $cookies;
     private $keepAlive;
     private $data;
+    private $config = [];
 
-    public function __construct($keepAlive = false)
+    public static function create()
+    {
+        return new static();
+    }
+
+    public function setIp($ip) {
+        $this->config['ip'] = $ip;
+        return $this;
+    }
+
+    public function setPort($port) {
+        $this->config['port'] = $port;
+        return $this;
+    }
+
+    public function keepAlive() {
+        $this->config['keepAlive'] = true;
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    public function build()
     {
         $this->headers = [];
         $this->cookies = [];
-        $this->keepAlive = $keepAlive;
+
+        if (isset($this->config['ip'])) {
+            $this->ip = $this->config['ip'];
+            $port = isset($this->config['port']) ? $this->config['port'] : 80;
+            $ssl = isset($this->config['ssl']) ? $this->config['ssl'] : false;
+            $this->client = new \Swoole\Coroutine\Http\Client($this->ip, $port, $ssl);
+        }
+
+        return $this;
     }
 
     /**
@@ -35,7 +67,7 @@ class CoClient
     {
         $this->method = 'GET';
         $this->data = null;
-        $this->execute($url);
+        return $this->execute($url);
     }
 
     /**
@@ -47,7 +79,7 @@ class CoClient
     {
         $this->method = 'POST';
         $this->data = $data;
-        $this->execute($url);
+        return $this->execute($url);
     }
 
     /**
@@ -59,7 +91,7 @@ class CoClient
     {
         $this->method = 'PUT';
         $this->data = $data;
-        $this->execute($url);
+        return $this->execute($url);
     }
 
     /**
@@ -96,22 +128,32 @@ class CoClient
 
         $this->url = parse_url($url);
 
-        $ip = $this->url['host'];
+        if(isset($this->url['host'])) {
+            $ip = $this->url['host'];
 
-        if ($ip != $this->ip || !$this->client || !$this->client->isConnected()) {
-            $this->ip = $ip;
-            $ssl = $this->url['scheme'] == 'https' ? true : false;
-            $port = $this->url['port'] ? $this->url['port'] : ($ssl ? 443 : 80);
-            $this->client = new \Swoole\Coroutine\Http\Client($ip, $port, $ssl);
+            if ($ip != $this->ip || !$this->client || !$this->client->isConnected()) {
+                $ssl = $this->url['scheme'] == 'https' ? true : false;
+                $config = [
+                    "ip" => $ip,
+                    "port" => $this->url['port'] ? $this->url['port'] : ($ssl ? 443 : 80),
+                    "ssl" => $ssl
+                ];
+
+                if ($this->config) {
+                    $config = array_merge($this->config, $config);
+                }
+
+                $this->build($config);
+            }
         }
 
         $this->client->setHeaders($this->headers);
         $this->client->setMethod($this->method);
         $this->client->setCookies($this->cookies);
         $this->data && $this->client->setData($this->data);
-        $this->client->execute($this->url['path'] . (isset($this->url['query']) ? $this->url['query'] : ""));
+        $this->client->execute($this->url['path'] . (isset($this->url['query']) ? "?" . $this->url['query'] : ""));
         $body = $this->client->body;
-        if (!$this->keepAlive && $this->client->isConnected()) {
+        if (!$this->config['keepAlive'] && $this->client->isConnected()) {
             $this->client->close();
         }
         return $body;

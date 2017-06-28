@@ -211,7 +211,7 @@ class Route
                 $handlerObject = new $handler[0]($app, $request, $response);
 
                 if ($request->isPost()) {
-                    $vars = [$request->postData()];
+                    $vars += [$request->postData()];
                 }
 
                 $responseData = call_user_func_array([$handlerObject, $handler[1]], $vars);

@@ -20,7 +20,8 @@ $app->loadConfig(
             'backlog' => 128,   //listen backlog
             'max_request' => 500,
             'dispatch_mode' => 1,
-            'task_worker_num' => 8
+            'task_worker_num' => 8,
+//            'daemonize' => true,
         ],
     ]
 );
@@ -46,6 +47,12 @@ $app->loadRoute(
         ['GET', '/pool/mysql', ['\Bijou\Example\Pool', 'mysql']],
         ['GET', '/curl/get', ['\Bijou\Example\Curl', 'get']],
         ['GET', '/curl/post', ['\Bijou\Example\Curl', 'post']],
+
+        '/log' => [
+            ['POST', '/', ['\Bijou\Example\Log', 'postLog']],
+            ['GET', '/{id}', ['\Bijou\Example\Log', 'getLog']],
+            ['GET', '/search/{keyword}', ['\Bijou\Example\Log', 'searchLog']],
+        ],
     ]
 );
 
