@@ -6,7 +6,7 @@
  * Time: 17:56
  */
 
-namespace Bijou\Elasticsearch;
+namespace Bijou\Storage\Elasticsearch;
 
 
 use Bijou\Http\CoClient;
@@ -19,6 +19,7 @@ class Client
     private $field = [];
     private $condition;
     private $id;
+    private $config;
     /**
      * @var CoClient
      */
@@ -29,12 +30,17 @@ class Client
         return new static();
     }
 
+    public function config(Array $config)
+    {
+        $this->config = $config;
+    }
+
     public function build()
     {
 
         $this->client = CoClient::create()
-            ->setIp("192.168.1.104")
-            ->setPort(9200)
+            ->setIp(isset($this->config['ip']) ? $this->config['ip'] :  "0.0.0.0")
+            ->setPort(isset($this->config['port']) ? $this->config['port'] :  9200)
             ->keepAlive()
             ->build();
         return $this;

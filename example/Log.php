@@ -9,8 +9,7 @@
 namespace Bijou\Example;
 
 use Bijou\Controller;
-use Bijou\Elasticsearch;
-use Bijou\Http\CoClient;
+use Bijou\Storage\Elasticsearch;
 
 class Log extends Controller
 {
