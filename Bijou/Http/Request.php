@@ -125,6 +125,11 @@ class Request
         return $this->header;
     }
 
+    public function getVersion()
+    {
+        return $this->request->header['version'];
+    }
+
     public function getApi()
     {
         return $this->request->server['path_info'];

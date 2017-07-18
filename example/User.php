@@ -25,6 +25,16 @@ class User extends Controller
 
     }
 
+    public function getUser1()
+    {
+        return ["v2"];
+    }
+
+    public function getUser2()
+    {
+        return ["v3"];
+    }
+
     /**
      * 创建用户
      * @param $data
@@ -33,7 +43,7 @@ class User extends Controller
     public function createUser($data)
     {
 //        return [
-            $this->getRequest()->file('ddd')->max(200)->type('jpg')->move("/a/b", "aaa.jpg");
+        $this->getRequest()->file('ddd')->max(200)->type('jpg')->move("/a/b", "aaa.jpg");
 //        ];
     }
 }

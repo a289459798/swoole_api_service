@@ -34,6 +34,8 @@ $app->loadRoute(
         '/user' => [
             ['POST', '/', ['\Bijou\Example\User', 'createUser']],
             ['GET', '/{id:[0-9]+}', ['\Bijou\Example\User', 'getUser']],
+            ['GET', '/{id:[0-9]+}', ['\Bijou\Example\User', 'getUser1'], 'version' => '2'],
+            ['GET', '/{id:[0-9]+}', ['\Bijou\Example\User', 'getUser2'], 'version' => '3'],
             ['PUT', '/{id:[0-9]+}', ['\Bijou\Example\User', 'updateUser']],
             ['DELETE', '/{id:[0-9]+}', ['\Bijou\Example\User', 'deleteUser']],
         ],

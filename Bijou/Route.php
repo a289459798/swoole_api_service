@@ -22,6 +22,8 @@ class Route
 {
 
     private $dispatcher;
+    private $dispatcherVersion = [];
+    private $routerVersion = [];
     private $securityRouters;
     private $cacheRouters;
     private $routes;
@@ -51,27 +53,54 @@ class Route
         foreach ($this->routes as $group => $route) {
             if (!is_int($group)) {
 
-                $r->addGroup($group, function (RouteCollector $r) use ($route) {
+                $r->addGroup($group, function (RouteCollector $r) use ($route, $group) {
 
                     foreach ($route as $rou) {
-                        $r->addRoute(strtoupper($rou[0]), $rou[1], $rou[2]);
-                        $this->parseRoute($rou);
+                        $this->parseRoute($r, $rou, $group);
                     }
 
                 });
             } else {
-                $r->addRoute(strtoupper($route[0]), $route[1], $route[2]);
-                $this->parseRoute($route);
+                $this->parseRoute($r, $route);
             }
+        }
+
+        foreach ($this->routerVersion as $version => $route) {
+            $this->dispatcherVersion[$version] = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) use ($route) {
+
+                if ($route['group']) {
+                    $r->addGroup($route['group'], function (RouteCollector $r) use ($route) {
+
+                        $r->addRoute($route['router'][0], $route['router'][1], $route['router'][2]);
+
+                    });
+                } else {
+                    $r->addRoute($route['router'][0], $route['router'][1], $route['router'][2]);
+                }
+
+            });
         }
 
     }
 
     /**
+     * @param RouteCollector $r
      * @param $route
+     * @param string $group
      */
-    private function parseRoute($route)
+    private function parseRoute(RouteCollector $r, $route, $group = "")
     {
+
+
+        if (isset($route['version'])) {
+            if (!is_array($this->routerVersion[$route['version']])) {
+                $this->routerVersion[$route['version']] = [];
+            }
+            $this->routerVersion[$route['version']] += ['group' => $group, 'router' => $route];
+            return;
+        }
+        $r->addRoute(strtoupper($route[0]), $route[1], $route[2]);
+
         $callback = join("_", $route[2]);
         if (isset($route['security'])) {
             $this->securityRouters[$callback] = $route['security'];
@@ -169,7 +198,29 @@ class Route
 
         $method = $request->getMethod();
         $pathInfo = $request->getApi();
-        $routeInfo = $this->dispatcher->dispatch($method, $pathInfo);
+        $version = $request->getVersion();
+        krsort($this->dispatcherVersion);
+
+        if ($version) {
+            if (isset($this->dispatcherVersion[$version])) {
+                $routeInfo = $this->dispatcherVersion[$version]->dispatch($method, $pathInfo);
+            } else {
+                foreach ($this->dispatcherVersion as $ver => $dispatcher) {
+
+                    if ($ver > $version) {
+                        continue;
+                    }
+                    $routeInfo = $dispatcher->dispatch($method, $pathInfo);
+                    if ($routeInfo) {
+                        break;
+                    }
+                }
+            }
+
+        }
+        if (!$routeInfo) {
+            $routeInfo = $this->dispatcher->dispatch($method, $pathInfo);
+        }
 
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
