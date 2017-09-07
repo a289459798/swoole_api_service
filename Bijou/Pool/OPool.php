@@ -53,7 +53,6 @@ class OPool
             return $pool->shift();
         } else {
             $reflector = new \ReflectionClass($name);
-            var_dump($args);
             if ($args && count($args) > 0) {
                 $obj = $reflector->newInstanceArgs($args);
             } else {
