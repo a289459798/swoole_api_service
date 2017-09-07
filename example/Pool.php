@@ -10,14 +10,15 @@ namespace Bijou\Example;
 
 
 use Bijou\Controller;
-use Bijou\Example\AsyncTask\EmailTask;
+use Bijou\Pool\OPool;
 
 class Pool extends Controller
 {
 
     public function mysql()
     {
-        return $this->pool('mysql')->sleep(1000000000);
+        $this->pool(\Bijou\Example\Driver\Mysql::class);
+        return [];
     }
 
 }

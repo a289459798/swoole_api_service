@@ -10,9 +10,9 @@
 namespace Bijou\Example\AsyncTask;
 
 
-use Bijou\Interfaces\AsyncTaskInterface;
+use Bijou\Interfaces\IAsyncTask;
 
-class EmailTask implements AsyncTaskInterface
+class EmailTask implements IAsyncTask
 {
 
     private $email;

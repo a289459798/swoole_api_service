@@ -9,7 +9,7 @@
 namespace Bijou\Manager;
 
 
-use Bijou\Interfaces\AsyncTaskInterface;
+use Bijou\Interfaces\IAsyncTask;
 use Swoole\Http\Server;
 
 class TaskManager
@@ -19,7 +19,7 @@ class TaskManager
     {
     }
 
-    public function addTask(Server $server, AsyncTaskInterface $asyncTask)
+    public function addTask(Server $server, IAsyncTask $asyncTask)
     {
         $server->task($asyncTask);
     }

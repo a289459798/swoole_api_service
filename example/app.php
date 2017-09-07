@@ -65,8 +65,6 @@ $app->setWebSocket('\Bijou\Example\Chat');
 $app->addDecorator(new \Bijou\Example\Decorator\TimeDecorator());
 $app->addDecorator(new \Bijou\Example\Decorator\ExceptionDecorator());
 
-$app->addService(new \Bijou\Example\Service\TestService());
-
-$app->addPool('mysql', new \Bijou\Example\Driver\Mysql());
+$app->addService(new \Bijou\Example\Service\TestIService());
 
 $app->run();

@@ -55,8 +55,8 @@ class Feed extends Controller
      */
     public function service()
     {
-        $this->startService('Bijou\Example\Service\TestService', 'action1', ['data' => 'data1']);
-        $this->startService('Bijou\Example\Service\TestService', 'action2', ['data' => 'data2']);
+        $this->startService('Bijou\Example\Service\TestIService', 'action1', ['data' => 'data1']);
+        $this->startService('Bijou\Example\Service\TestIService', 'action2', ['data' => 'data2']);
         return '123';
     }
 

@@ -9,9 +9,9 @@
 namespace Bijou\Example\AsyncTask;
 
 
-use Bijou\Interfaces\AsyncTaskInterface;
+use Bijou\Interfaces\IAsyncTask;
 
-class ExportApiTask implements AsyncTaskInterface
+class ExportApiTask implements IAsyncTask
 {
 
     private $route;

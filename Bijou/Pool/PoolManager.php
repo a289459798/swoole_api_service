@@ -6,10 +6,8 @@
  * Time: 22:39
  */
 
-namespace Bijou\Manager;
+namespace Bijou\Pool;
 
-
-use Bijou\Interfaces\PoolInterface;
 
 class PoolManager
 {
@@ -21,7 +19,7 @@ class PoolManager
         $this->pool = [];
     }
 
-    public function addDriver($name, PoolInterface $driver)
+    public function addDriver($name, IPool $driver)
     {
 
         $this->pool[$name] = new Pool($driver);

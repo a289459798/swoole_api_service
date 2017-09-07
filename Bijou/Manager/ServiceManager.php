@@ -9,7 +9,7 @@
 namespace Bijou\Manager;
 
 
-use Bijou\Interfaces\ServiceInterface;
+use Bijou\Interfaces\IService;
 
 class ServiceManager
 {
@@ -20,7 +20,7 @@ class ServiceManager
         $this->manager = [];
     }
 
-    public function addService(ServiceInterface $service)
+    public function addService(IService $service)
     {
         $this->manager[get_class($service)] = $service;
     }

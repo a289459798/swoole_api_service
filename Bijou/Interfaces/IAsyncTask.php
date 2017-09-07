@@ -9,7 +9,7 @@
 namespace Bijou\Interfaces;
 
 
-interface AsyncTaskInterface
+interface IAsyncTask
 {
     /**
      * 异步执行

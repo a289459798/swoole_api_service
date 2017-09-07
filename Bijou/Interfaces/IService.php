@@ -9,7 +9,7 @@
 namespace Bijou\Interfaces;
 
 
-interface ServiceInterface
+interface IService
 {
 
     /**

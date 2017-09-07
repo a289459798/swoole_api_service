@@ -9,9 +9,9 @@
 namespace Bijou\Example\Service;
 
 
-use Bijou\Interfaces\ServiceInterface;
+use Bijou\Interfaces\IService;
 
-class TestService implements ServiceInterface
+class TestIService implements IService
 {
     /**
      *

@@ -10,7 +10,6 @@
 namespace Bijou;
 
 use Bijou\Manager\CacheManager;
-use Bijou\Manager\PoolManager;
 use Bijou\Manager\ServiceManager;
 use Bijou\Manager\TaskManager;
 use Bijou\Decorator\Decorator;
@@ -22,9 +21,9 @@ use Bijou\Exception\PHPException;
 use Bijou\Http\Frame;
 use Bijou\Http\Request;
 use Bijou\Http\Response;
-use Bijou\Interfaces\AsyncTaskInterface;
-use Bijou\Interfaces\PoolInterface;
-use Bijou\Interfaces\ServiceInterface;
+use Bijou\Interfaces\IAsyncTask;
+use Bijou\Interfaces\IService;
+use Bijou\Pool\OPool;
 use Swoole\Http;
 use Swoole\Process;
 use Swoole\WebSocket;
@@ -173,9 +172,9 @@ class App
 
     /**
      * 添加一个异步任务并执行
-     * @param AsyncTaskInterface $asyncTask
+     * @param IAsyncTask $asyncTask
      */
-    public function addAsyncTask(AsyncTaskInterface $asyncTask)
+    public function addAsyncTask(IAsyncTask $asyncTask)
     {
         if ($this->taskManager) {
             $this->taskManager->addTask($this->server, $asyncTask);
@@ -196,9 +195,9 @@ class App
 
     /**
      * 注册一个永远在后台执行的service
-     * @param ServiceInterface $service
+     * @param IService $service
      */
-    public function addService(ServiceInterface $service)
+    public function addService(IService $service)
     {
         if (!$this->serviceManager) {
             $this->serviceManager = new ServiceManager();
@@ -206,29 +205,6 @@ class App
         $this->serviceManager->addService($service);
         $this->process[get_class($service)] = new Process([$this->serviceManager, 'onCommand']);
         $this->server->addProcess($this->process[get_class($service)]);
-    }
-
-    /**
-     * 添加连接池
-     * @param $name
-     * @param PoolInterface $driver
-     */
-    public function addPool($name, PoolInterface $driver)
-    {
-        if (!isset($this->server->poolManager)) {
-            $this->server->poolManager = new PoolManager();
-        }
-
-        $this->server->poolManager->addDriver($name, $driver);
-    }
-
-    /**
-     * 调用连接池连接
-     * @param $path
-     */
-    public function pool($path)
-    {
-        return $this->server->poolManager->driver($path);
     }
 
     /**

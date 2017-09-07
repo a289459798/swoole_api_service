@@ -6,10 +6,10 @@
  * Time: 22:44
  */
 
-namespace Bijou\Interfaces;
+namespace Bijou\Pool;
 
 
-interface PoolInterface
+interface IPool
 {
     /**
      * 每个进程允许的最大空闲连接数

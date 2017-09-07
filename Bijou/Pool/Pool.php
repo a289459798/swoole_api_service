@@ -6,9 +6,7 @@
  * Time: 22:39
  */
 
-namespace Bijou\Manager;
-
-use Bijou\Interfaces\PoolInterface;
+namespace Bijou\Pool;
 
 class Pool
 {
@@ -21,7 +19,7 @@ class Pool
     private $busyPoolSize;
     private $driver;
 
-    public function __construct(PoolInterface $driver)
+    public function __construct(IPool $driver)
     {
 
         $this->allowPoolSize = $driver->allowPoolSize();
