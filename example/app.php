@@ -46,14 +46,24 @@ $app->loadRoute(
         ['GET', '/feed/service', ['\Bijou\Example\Feed', 'service']],
         ['GET', '/feed/user/{id:[0-9]+}', ['\Bijou\Example\Feed', 'getUser']],
         ['GET', '/export', ['\Bijou\Example\Export', 'getApi']],
+        ['GET', '/export/phone/{count:[0-9]+}', ['\Bijou\Example\Export', 'phone']],
         ['GET', '/pool/mysql', ['\Bijou\Example\Pool', 'mysql']],
         ['GET', '/curl/get', ['\Bijou\Example\Curl', 'get']],
         ['GET', '/curl/post', ['\Bijou\Example\Curl', 'post']],
+        ['GET', '/curl/wxsession', ['\Bijou\Example\Curl', 'wxsession']],
+        ['GET', '/curl/dianping/{cityid:[0-9]+}/{start:[0-9]+}', ['\Bijou\Example\Curl', 'dianping']],
+        ['GET', '/curl/boolan/{page:[0-9]+}', ['\Bijou\Example\Curl', 'boolan']],
+        ['GET', '/curl/pet/{cityid:[0-9]+}/{start:[0-9]+}/{city}', ['\Bijou\Example\Curl', 'pet']],
 
         '/log' => [
             ['POST', '/', ['\Bijou\Example\Log', 'postLog']],
             ['GET', '/{id}', ['\Bijou\Example\Log', 'getLog']],
             ['GET', '/search/{keyword}', ['\Bijou\Example\Log', 'searchLog']],
+        ],
+
+        '/tbk' => [
+            ['GET', '/{query}', ['\Bijou\Example\TBK', 'search']],
+            ['GET', '/link/{num_iid}', ['\Bijou\Example\TBK', 'getLink']],
         ],
     ]
 );
@@ -66,5 +76,8 @@ $app->addDecorator(new \Bijou\Example\Decorator\TimeDecorator());
 $app->addDecorator(new \Bijou\Example\Decorator\ExceptionDecorator());
 
 $app->addService(new \Bijou\Example\Service\TestIService());
+$app->addService(new \Bijou\Example\Service\DianPingService());
+$app->addService(new \Bijou\Example\Service\BoolanService());
+$app->addService(new \Bijou\Example\Service\DianPingPetService());
 
 $app->run();

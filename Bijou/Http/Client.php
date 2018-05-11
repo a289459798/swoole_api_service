@@ -100,12 +100,14 @@ class Client
     {
         $this->url = parse_url($url);
         $this->callback = $callback;
+
         \Swoole\Async::dnsLookup($this->url['host'], [$this, 'execute']);
     }
 
     public function execute($host, $ip)
     {
 
+        var_dump($ip);
         if ($ip) {
             if ($ip != $this->ip || !$this->client || !$this->client->isConnected()) {
                 $this->ip = $ip;
@@ -123,6 +125,7 @@ class Client
             $this->data && $this->client->setData($this->data);
             $callback = $this->callback;
             $this->client->execute($this->url['path'] . (isset($this->url['query']) ? "?" . $this->url['query'] : ""), function ($response) use ($callback) {
+
                 call_user_func($callback, $response->body);
             });
 

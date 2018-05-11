@@ -2,7 +2,9 @@
     "require": {
         "php": ">=5.6.0",
         "nikic/fast-route": "^1.2.0",
-        "joshcam/mysqli-database-class": "dev-master"
+        "joshcam/mysqli-database-class": "dev-master",
+        "curl/curl": "^1.5",
+        "phpoffice/phpspreadsheet": "dev-develop"
     },
 
     "autoload": {
