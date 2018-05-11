@@ -1,0 +1,8 @@
+.idea
+vendor
+*.lock
+#Dockerfile
+docker-compose.yaml
+/nbproject/
+conf.d
+cache
