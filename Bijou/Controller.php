@@ -1,17 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zhangzy
- * Date: 2017/3/17
- * Time: 10:26
- */
 
 namespace Bijou;
 
-use Bijou\Interfaces\IAsyncTask;
-use Bijou\Http\Request;
-use Bijou\Http\Response;
-use Bijou\Pool\OPool;
+use Bijou\Core\Interfaces\IAsyncTask;
+use Bijou\Components\Http\Request;
+use Bijou\Components\Http\Response;
+use Bijou\Manager\Pool\OPool;
 
 abstract class Controller
 {
@@ -41,7 +35,7 @@ abstract class Controller
     }
 
     /**
-     * @return \Bijou\Http\Request
+     * @return \Bijou\Components\Http\Request
      */
     public function getRequest()
     {
@@ -49,7 +43,7 @@ abstract class Controller
     }
 
     /**
-     * @return \Bijou\Http\Response
+     * @return \Bijou\Components\Http\Response
      */
     public function getResponse()
     {
@@ -88,8 +82,8 @@ abstract class Controller
 
     /**
      * 给常驻进程发送执行命令
-     * @param $classPath 注册service的class 路径
-     * @param $action
+     * @param string $classPath 注册service的class 路径
+     * @param string $action
      * @param array $data 传递的数据
      */
     public function startService($classPath, $action, Array $data)

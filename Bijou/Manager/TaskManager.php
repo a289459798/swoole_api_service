@@ -9,7 +9,7 @@
 namespace Bijou\Manager;
 
 
-use Bijou\Interfaces\IAsyncTask;
+use Bijou\Core\Interfaces\IAsyncTask;
 use Swoole\Http\Server;
 
 class TaskManager

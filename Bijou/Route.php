@@ -1,19 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zhangzy
- * Date: 2017/3/16
- * Time: 23:48
- */
 
 namespace Bijou;
 
-use Bijou\Exception\ForbiddenException;
-use Bijou\Exception\MethodNotAllowException;
-use Bijou\Exception\NoFoundException;
-use Bijou\Exception\PHPException;
-use Bijou\Http\Request;
-use Bijou\Http\Response;
+use Bijou\Core\Exception\ForbiddenException;
+use Bijou\Core\Exception\MethodNotAllowException;
+use Bijou\Core\Exception\NoFoundException;
+use Bijou\Core\Exception\PHPException;
+use Bijou\Components\Http\Request;
+use Bijou\Components\Http\Response;
 use FastRoute;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;

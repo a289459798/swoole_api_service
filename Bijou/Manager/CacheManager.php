@@ -63,7 +63,7 @@ class CacheManager
         if (function_exists('\Swoole\Serialize::pack')) {
             return \Swoole\Serialize::pack($data);
         } else if (function_exists('\swSerialize::pack')) {
-            return \swSerialize::pack($data);
+            return \swoole_serialize::pack($data);
         }
         return serialize($data);
     }
@@ -73,7 +73,7 @@ class CacheManager
         if (function_exists('\Swoole\Serialize::unpack')) {
             return \Swoole\Serialize::unpack($data);
         } else if (function_exists('\swSerialize::pack')) {
-            return \swSerialize::unpack($data);
+            return \swoole_serialize::unpack($data);
         }
         return unserialize($data);
     }

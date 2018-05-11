@@ -4,7 +4,7 @@ namespace Bijou\Components\CoHttp;
 
 use Bijou\Swoole\ServerSetting;
 
-abstract class HttpServer
+abstract class Server
 {
     protected $host = "0.0.0.0";
 

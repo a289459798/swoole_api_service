@@ -9,7 +9,7 @@
 namespace Bijou\Manager;
 
 
-use Bijou\Interfaces\IService;
+use Bijou\Core\Interfaces\IService;
 
 class ServiceManager
 {
