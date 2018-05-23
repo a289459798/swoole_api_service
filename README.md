@@ -85,10 +85,10 @@ class User
 }
 ```
 
-如果需要获取request 和 response 相关，需要继承 `BijouApi`
+如果需要获取request 和 response 相关，需要继承 `Controller`
 
 ```php
-class Feed extends BijouApi
+class Feed extends Controller
 {
 
     public function getInfo($id)
@@ -189,13 +189,13 @@ class User
 
 ...
 
-class Feed extends BijouApi
+class Feed extends Controller
 {
 
     public function getUser($id)
     {
         // 调用user api的方法
-        return $this->invokeApi(['\Bijou\Example\User', 'getInfo'], [$id]);
+        return $this->dispatch(['\Bijou\Example\User', 'getInfo'], [$id]);
     }
 }
 ```
@@ -379,7 +379,7 @@ $app->addService(new \Bijou\Example\Service\TestService());
 
 ...
 
-class Feed extends BijouApi
+class Feed extends Controller
 {
 
     public function service()
@@ -423,7 +423,7 @@ class TestService implements ServiceInterface
 支持异步任务，用于处理一些耗时操作，比如发送推送、短信、邮件等，需要设置 `task_worker_num > 0`，异步任务需要实现 `AsyncTaskInterface` 接口
 
 ```php
-class Feed extends BijouApi
+class Feed extends Controller
 {
     public function postEmail()
     {
@@ -487,7 +487,7 @@ api相关信息通过注解来声明
 public function getUser($id)
 {
 
-    return $this->invokeApi(['\Bijou\Example\User', 'getInfo'], [$id]);
+    return $this->dispatch(['\Bijou\Example\User', 'getInfo'], [$id]);
 }
 ```
 对于不想导出的api，加 `@ignore` 注解

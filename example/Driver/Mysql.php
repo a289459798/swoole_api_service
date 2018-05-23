@@ -9,9 +9,9 @@
 
 namespace Bijou\Example\Driver;
 
-use Bijou\Interfaces\PoolInterface;
+use Bijou\Pool\IPool;
 
-class Mysql implements PoolInterface
+class Mysql implements IPool
 {
 
     public function sleep($size)

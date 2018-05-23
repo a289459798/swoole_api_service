@@ -13,12 +13,6 @@ use Bijou\Http\Request;
 
 class TimeDecorator extends RunTimeDecorator
 {
-    private $requests;
-
-    public function __construct()
-    {
-        $this->requests = [];
-    }
 
     private function setRunTime($request, $time)
     {
@@ -38,7 +32,6 @@ class TimeDecorator extends RunTimeDecorator
      */
     public function requestStart(Request $request)
     {
-        $this->requests[$request->getClient()] = $this->getCurrentTime();
 
         return true;
     }
@@ -51,12 +44,8 @@ class TimeDecorator extends RunTimeDecorator
      */
     public function requestEnd(Request $request, $data = null)
     {
-        if (isset($this->requests[$request->getClient()])) {
-            $endTime = $this->getCurrentTime();
-            $this->setRunTime($request, round($endTime - $this->requests[$request->getClient()], 4));
-            unset($this->requests[$request->getClient()]);
-        }
-
+        $endTime = $this->getCurrentTime();
+        $this->setRunTime($request, round($endTime - $request->server['request_time_float'], 4));
     }
 
     /**
@@ -66,10 +55,15 @@ class TimeDecorator extends RunTimeDecorator
      */
     public function responseFormat($data)
     {
+//        return $data;
+        $code = $data['code'] ? $data['code'] : 200;
+        $message = $data['message'] ? $data['message'] : '';
+        unset($data['code']);
+        unset($data['message']);
         return json_encode([
-            'code' => isset($data['code']) ? $data['code'] : 200,
-            'message' => isset($data['message']) ? $data['message'] : '',
+            'code' => $code,
+            'message' => $message,
             'data' => $data
-        ]);
+        ], JSON_UNESCAPED_UNICODE);
     }
 }

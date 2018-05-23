@@ -9,10 +9,10 @@
 namespace Bijou\Example;
 
 
-use Bijou\BijouApi;
+use Bijou\Controller;
 use Bijou\Example\AsyncTask\EmailTask;
 
-class Feed extends BijouApi
+class Feed extends Controller
 {
 
     /**
@@ -36,7 +36,7 @@ class Feed extends BijouApi
     public function getUser($id)
     {
 
-        return $this->invokeApi(['\Bijou\Example\User', 'getInfo'], [$id]);
+        return $this->dispatch(['\Bijou\Example\User', 'getUser'], [$id]);
     }
 
     /**
@@ -55,8 +55,8 @@ class Feed extends BijouApi
      */
     public function service()
     {
-        $this->startService('Bijou\Example\Service\TestService', 'action1', ['data' => 'data1']);
-        $this->startService('Bijou\Example\Service\TestService', 'action2', ['data' => 'data2']);
+        $this->startService('Bijou\Example\Service\TestIService', 'action1', ['data' => 'data1']);
+        $this->startService('Bijou\Example\Service\TestIService', 'action2', ['data' => 'data2']);
         return '123';
     }
 

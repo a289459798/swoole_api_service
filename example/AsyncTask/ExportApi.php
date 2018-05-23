@@ -9,9 +9,7 @@
 namespace Bijou\Example\AsyncTask;
 
 
-use Bijou\Interfaces\ExportApiInterface;
-
-class ExportApi implements ExportApiInterface
+class ExportApi
 {
 
     /**

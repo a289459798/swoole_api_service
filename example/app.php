@@ -20,8 +20,9 @@ $app->loadConfig(
             'backlog' => 128,   //listen backlog
             'max_request' => 500,
             'dispatch_mode' => 1,
-            'task_worker_num' => 8
-        ]
+            'task_worker_num' => 8,
+//            'daemonize' => true,
+        ],
     ]
 );
 
@@ -31,8 +32,12 @@ $app->addListener(['0.0.0.0', 9502, SWOOLE_TCP]);
 $app->loadRoute(
     [
         '/user' => [
-            ['GET', '/{id:[0-9]+}', ['\Bijou\Example\User', 'getInfo']],
-            ['POST', '/', ['\Bijou\Example\User', 'create']],
+            ['POST', '/', ['\Bijou\Example\User', 'createUser']],
+            ['GET', '/{id:[0-9]+}', ['\Bijou\Example\User', 'getUser']],
+            ['GET', '/{id:[0-9]+}', ['\Bijou\Example\User', 'getUser1'], 'version' => '2'],
+            ['GET', '/{id:[0-9]+}', ['\Bijou\Example\User', 'getUser2'], 'version' => '3'],
+            ['PUT', '/{id:[0-9]+}', ['\Bijou\Example\User', 'updateUser']],
+            ['DELETE', '/{id:[0-9]+}', ['\Bijou\Example\User', 'deleteUser']],
         ],
 
         ['GET', '/feed/{id:[0-9]+}', ['\Bijou\Example\Feed', 'getInfo'], 'cache' => true],
@@ -41,9 +46,25 @@ $app->loadRoute(
         ['GET', '/feed/service', ['\Bijou\Example\Feed', 'service']],
         ['GET', '/feed/user/{id:[0-9]+}', ['\Bijou\Example\Feed', 'getUser']],
         ['GET', '/export', ['\Bijou\Example\Export', 'getApi']],
+        ['GET', '/export/phone/{count:[0-9]+}', ['\Bijou\Example\Export', 'phone']],
         ['GET', '/pool/mysql', ['\Bijou\Example\Pool', 'mysql']],
         ['GET', '/curl/get', ['\Bijou\Example\Curl', 'get']],
         ['GET', '/curl/post', ['\Bijou\Example\Curl', 'post']],
+        ['GET', '/curl/wxsession', ['\Bijou\Example\Curl', 'wxsession']],
+        ['GET', '/curl/dianping/{cityid:[0-9]+}/{start:[0-9]+}', ['\Bijou\Example\Curl', 'dianping']],
+        ['GET', '/curl/boolan/{page:[0-9]+}', ['\Bijou\Example\Curl', 'boolan']],
+        ['GET', '/curl/pet/{cityid:[0-9]+}/{start:[0-9]+}/{city}', ['\Bijou\Example\Curl', 'pet']],
+
+        '/log' => [
+            ['POST', '/', ['\Bijou\Example\Log', 'postLog']],
+            ['GET', '/{id}', ['\Bijou\Example\Log', 'getLog']],
+            ['GET', '/search/{keyword}', ['\Bijou\Example\Log', 'searchLog']],
+        ],
+
+        '/tbk' => [
+            ['GET', '/{query}', ['\Bijou\Example\TBK', 'search']],
+            ['GET', '/link/{num_iid}', ['\Bijou\Example\TBK', 'getLink']],
+        ],
     ]
 );
 
@@ -54,8 +75,9 @@ $app->setWebSocket('\Bijou\Example\Chat');
 $app->addDecorator(new \Bijou\Example\Decorator\TimeDecorator());
 $app->addDecorator(new \Bijou\Example\Decorator\ExceptionDecorator());
 
-$app->addService(new \Bijou\Example\Service\TestService());
-
-$app->addPool('mysql', new \Bijou\Example\Driver\Mysql());
+$app->addService(new \Bijou\Example\Service\TestIService());
+$app->addService(new \Bijou\Example\Service\DianPingService());
+$app->addService(new \Bijou\Example\Service\BoolanService());
+$app->addService(new \Bijou\Example\Service\DianPingPetService());
 
 $app->run();

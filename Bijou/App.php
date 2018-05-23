@@ -1,30 +1,20 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: zhangzy
- * Date: 2017/3/15
- * Time: 16:30
- */
-
 namespace Bijou;
 
-use Bijou\Core\CacheManager;
-use Bijou\Core\PoolManager;
-use Bijou\Core\ServiceManager;
-use Bijou\Core\TaskManager;
-use Bijou\Decorator\Decorator;
-use Bijou\Decorator\ExceptionDecorator;
-use Bijou\Decorator\RunTimeDecorator;
-use Bijou\Exception\MethodNotAllowException;
-use Bijou\Exception\NoFoundException;
-use Bijou\Exception\PHPException;
-use Bijou\Http\Frame;
-use Bijou\Http\Request;
-use Bijou\Http\Response;
-use Bijou\Interfaces\AsyncTaskInterface;
-use Bijou\Interfaces\PoolInterface;
-use Bijou\Interfaces\ServiceInterface;
+use Bijou\Manager\CacheManager;
+use Bijou\Manager\ServiceManager;
+use Bijou\Manager\TaskManager;
+use Bijou\Core\Decorator\Decorator;
+use Bijou\Core\Decorator\ExceptionDecorator;
+use Bijou\Core\Decorator\RunTimeDecorator;
+use Bijou\Core\Exception\MethodNotAllowException;
+use Bijou\Core\Exception\NoFoundException;
+use Bijou\Core\Exception\PHPException;
+use Bijou\Components\Http\Request;
+use Bijou\Components\Http\Response;
+use Bijou\Core\Interfaces\IAsyncTask;
+use Bijou\Core\Interfaces\IService;
 use Swoole\Http;
 use Swoole\Process;
 use Swoole\WebSocket;
@@ -40,6 +30,7 @@ class App
     private $serviceManager;
     private $process;
     private $cacheManger;
+    private $config;
 
     /**
      * 设置监听的ip与端口
@@ -71,6 +62,7 @@ class App
      */
     public function loadConfig(Array $config)
     {
+        $this->config = $config;
         if (isset($config['server'])) {
 
             $this->server->set($config['server']);
@@ -92,27 +84,6 @@ class App
         $port = $this->server->addlistener($ips[0], $ips[1], $ips[2]);
 
         isset($config) && $port->set($config);
-    }
-
-    /**
-     * @param $className
-     */
-    public function setWebSocket($className)
-    {
-        if ($this->server instanceof WebSocket\Server) {
-
-            if (is_callable([$className, "onOpen"])) {
-                $this->server->on('open', function (WebSocket\Server $server, Http\Request $request) use ($className) {
-                    call_user_func_array([$className, "onOpen"], [new \Bijou\Http\WebSocket($server), new \Bijou\Http\Request($request)]);
-                });
-            }
-
-            $this->server->on('message', function (WebSocket\Server $server, WebSocket\Frame $frame) use ($className) {
-                call_user_func_array([$className, "onMessage"], [new \Bijou\Http\WebSocket($server), new Frame($frame)]);
-            });
-
-            is_callable([$className, "onClose"]) && $this->server->on('close', [$className, "onClose"]);
-        }
     }
 
     /**
@@ -171,9 +142,9 @@ class App
 
     /**
      * 添加一个异步任务并执行
-     * @param AsyncTaskInterface $asyncTask
+     * @param IAsyncTask $asyncTask
      */
-    public function addAsyncTask(AsyncTaskInterface $asyncTask)
+    public function addAsyncTask(IAsyncTask $asyncTask)
     {
         if ($this->taskManager) {
             $this->taskManager->addTask($this->server, $asyncTask);
@@ -194,9 +165,9 @@ class App
 
     /**
      * 注册一个永远在后台执行的service
-     * @param ServiceInterface $service
+     * @param IService $service
      */
-    public function addService(ServiceInterface $service)
+    public function addService(IService $service)
     {
         if (!$this->serviceManager) {
             $this->serviceManager = new ServiceManager();
@@ -204,29 +175,6 @@ class App
         $this->serviceManager->addService($service);
         $this->process[get_class($service)] = new Process([$this->serviceManager, 'onCommand']);
         $this->server->addProcess($this->process[get_class($service)]);
-    }
-
-    /**
-     * 添加连接池
-     * @param $name
-     * @param PoolInterface $driver
-     */
-    public function addPool($name, PoolInterface $driver)
-    {
-        if (!isset($this->server->poolManager)) {
-            $this->server->poolManager = new PoolManager();
-        }
-
-        $this->server->poolManager->addDriver($name, $driver);
-    }
-
-    /**
-     * 调用连接池连接
-     * @param $path
-     */
-    public function pool($path)
-    {
-        return $this->server->poolManager->driver($path);
     }
 
     /**
@@ -263,7 +211,8 @@ class App
     {
         $this->requestEnd($request);
         if (isset($this->exceptionDecorator)) {
-            $response->send($this->exceptionDecorator->throwException($request, $throwable));
+            $response->status($throwable->getCode());
+            $response->send($this->exceptionDecorator->throwException($request, $response, $throwable));
             return true;
         }
 
@@ -301,5 +250,4 @@ class App
     {
         $this->server->start();
     }
-
 }

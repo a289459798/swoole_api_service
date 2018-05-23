@@ -1,0 +1,94 @@
+
+          <html>
+          <head>
+          <title> Helper </title>
+          <meta http-equiv='content-type' content='text/html;charset=utf-8'>
+          <style type='text/css'>
+            BODY { color: #000000; background-color: white; font-family: Verdana; margin:0px;}        
+            A:link { color: #336699; font-weight: bold; text-decoration: none; }
+            A:visited { color: #6699cc; font-weight: bold; text-decoration: none; }
+            A:active { color: #336699; font-weight: bold; text-decoration: underline; }
+            A:hover { color: #cc3300; font-weight: bold; text-decoration: none; }
+            P { color: #000000; margin-top: 0px; margin-bottom: 12px; font-family: Verdana; }
+            pre { background-color: #efefdc; padding: 5px; font-family: Courier New; font-size: 11px; border: 1px #f0f0e0 solid; margin:0; }
+            ul { margin-top: 10px; margin-left: 20px; }
+            li { margin-top: 10px; color: #000; list-style-type:circle;}
+            .heading1 { color: #ffffff; font-family: Tahoma; font-size: 26px; background-color: #003366; padding:10px 0px 8px 20px;}
+            #content {font-size: .80em; padding:8px 16px;}
+            .intro { margin-left: 10px; }
+            h5 {margin:5px 0px 2px 0px;font-size:12px;}
+            h5 i {color:#888;}
+            h5 p {color:#666;}
+            a span {color:#777;}
+            pre { background-color:#efefdc; color:#555; padding: 5px; font-family: Courier New; font-size: 11px; border: 1px #999 dashed; margin:0; }
+            pre b {color:#992222;}
+            .parameters {color:#666;font-size:11px;padding:5px;line-height:150%;border:1px #999 solid;background-color: #f2f2f2;}
+            .desc {display:none;color:#333;}
+          </style>
+          <script>
+            function toggle(div) {
+              var d = document.getElementById(div);
+              if(d.style.display=='block')
+                d.style.display = 'none';
+              else
+                d.style.display = 'block';
+            }
+          </script>
+          </head>
+          <body>
+          <p class='heading1'> Helper </p>
+          <div id='content'>
+          <p class='intro'></p>
+          <ul>
+              <li id='/user/'>
+                <a href='javascript:void(0);' onclick='toggle("toggle__user_");'>/user/ &#12288;<span>创建用户</span></a>
+                <div id='toggle__user_' class='desc'>                  
+                  <h5><i>Request Method:</i></h5><div class="parameters">POST</div>
+                  <h5><i>Input Parameters:</i></h5><div class="parameters">$body <b></b> <br>$formData <b></b> <br></div>
+                  <h5><i>Output Parameters:</i></h5><div class="parameters">string</div>
+                </div>
+              </li>
+              <li id='/feed/{id:[0-9]+}'>
+                <a href='javascript:void(0);' onclick='toggle("toggle__feed__id:[0-9]+_");'>/feed/{id:[0-9]+} &#12288;<span>获取信息</span></a>
+                <div id='toggle__feed__id:[0-9]+_' class='desc'>                  
+                  <h5><i>Request Method:</i></h5><div class="parameters">GET</div>
+                  <h5><i>Input Parameters:</i></h5><div class="parameters">int <b>id</b> <br></div>
+                  <h5><i>Output Parameters:</i></h5><div class="parameters">string</div>
+                </div>
+              </li>
+              <li id='/feed'>
+                <a href='javascript:void(0);' onclick='toggle("toggle__feed");'>/feed &#12288;<span>发表帖子</span></a>
+                <div id='toggle__feed' class='desc'>                  
+                  <h5><i>Request Method:</i></h5><div class="parameters">POST</div>
+                  <h5><i>No Parameter</i></h5>
+                  <h5><i>Output Parameters:</i></h5><div class="parameters">string</div>
+                </div>
+              </li>
+              <li id='/feed/email'>
+                <a href='javascript:void(0);' onclick='toggle("toggle__feed_email");'>/feed/email &#12288;<span>异步任务发送邮件</span></a>
+                <div id='toggle__feed_email' class='desc'>                  
+                  <h5><i>Request Method:</i></h5><div class="parameters">GET</div>
+                  <h5><i>No Parameter</i></h5>
+                  <h5><i>Output Parameters:</i></h5><div class="parameters">string</div>
+                </div>
+              </li>
+              <li id='/feed/service'>
+                <a href='javascript:void(0);' onclick='toggle("toggle__feed_service");'>/feed/service &#12288;<span>执行后台任务</span></a>
+                <div id='toggle__feed_service' class='desc'>                  
+                  <h5><i>Request Method:</i></h5><div class="parameters">GET</div>
+                  <h5><i>No Parameter</i></h5>
+                  <h5><i>Output Parameters:</i></h5><div class="parameters">string</div>
+                </div>
+              </li>
+              <li id='/feed/user/{id:[0-9]+}'>
+                <a href='javascript:void(0);' onclick='toggle("toggle__feed_user__id:[0-9]+_");'>/feed/user/{id:[0-9]+} &#12288;<span>获取发帖用户信息</span></a>
+                <div id='toggle__feed_user__id:[0-9]+_' class='desc'>                  
+                  <h5><i>Request Method:</i></h5><div class="parameters">GET</div>
+                  <h5><i>Input Parameters:</i></h5><div class="parameters">$id <b></b> <br></div>
+                  <h5><i>Output Parameters:</i></h5><div class="parameters">mixed</div>
+                </div>
+              </li></ul>
+          </div>
+          </body>
+          </html>
+          
